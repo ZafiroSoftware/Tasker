@@ -2,7 +2,8 @@
  * @jsx React.DOM
  */
 var socket = io.connect();
-var userdefault;
+var usuaridefault = 'JuanHdzL'
+socket.emit('adduser', usuaridefault);
 
 var Header = React.createClass(
 {  render: function ()
@@ -82,10 +83,7 @@ var App = React.createClass({
         }.bind(this));
     },
     componentDidMount: function() {
-        var pathArray = window.location.pathname.split( '/' );
-        userdefault = pathArray[pathArray.length-1];
-        socket.emit('adduser', userdefault);
-        eventsService.findByName('',userdefault).done(function(tasks) {
+        eventsService.findByName('',usuaridefault).done(function(tasks) {
             this.setState({
                 tasks: tasks,
                 pages: [<HomePage searchHandler={this.searchHandler} tasks={tasks}/>]});

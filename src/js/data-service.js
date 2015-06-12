@@ -19,3 +19,23 @@ eventsService = (function ()
   		return $.ajax({url: baseURL + "/" + "events/" + username, data: {name: searchKey }});  } 
  	};
 }());
+
+productsService = (function ()
+{
+        var baseURL = "";
+        return {
+                 findByName: function(searchKey) {return $.ajax({url: baseURL + "/" + "getProducts", data: {name: searchKey}}); }
+               };
+}());
+
+
+customerService = (function ()
+{
+        var baseURL = "";
+        return {
+              //findById: function(id) { return $.ajax(url + "/getCustomerByID/" + id);},
+             findById: function(id) { return $.ajax({ url: baseURL + "/getCustomerByID" , data: {id:id} }); },
+
+                 findByName: function(searchKey) {return $.ajax({url: baseURL + "/" + "getCustomer", data: {name: searchKey}}); }
+               };
+}());

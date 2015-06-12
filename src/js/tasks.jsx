@@ -1,4 +1,3 @@
-var Notification = require('react-notification');
 /**
  * @jsx React.DOM
  */
@@ -68,46 +67,6 @@ var TaskList = React.createClass(
             </ul>
             );
     }
-});
-
-var Notify = React.createClass(
-{ handleShow: function() {
-    console.log('Notification hidden:', false);
-    this.refs.notification.show();
-  },
-  handleHide: function(){
-    console.log('Notification hidden:', true);
-    this.refs.notification.hide();
-  },
-  handleNotificationActionClick: function(){
-    console.log('Notification action clicked:', true);
-  },
- getNotificationStyles:function()
- {
-  var bar = { background: '#263238'};
-  var action = {color: '#FFCCBC'};
-  return { bar, action };
-},
- getInitialState() {
-    return {
-      message: 'Todo added',
-      action: 'Undo'
-    };
-  },
-render: function()
-{
-  return(
-    <div>
-     <button onClick = {this.handleShow}>Show</button>
-     <button onClick = {this.handleHide}>Hide</button>
-      <Notification
-        ref="notification"
-        message={this.state.message}
-        action={this.state.action}
-        styles={this.getNotificationStyles()} />
-    </div>
-  );
-}
 });
 
 var HomePage = React.createClass(

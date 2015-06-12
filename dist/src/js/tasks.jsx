@@ -38,6 +38,10 @@ var TaskListItem = React.createClass(
         window.location = this.props.task.use //"/" + this.props.task.task + "?id=" + this.props.task.id;  
       }
     },
+    btnOnClickEvent: function()
+    {
+      window.open(this.props.task.how);
+    },
     render: function ()
     {
         return ( 
@@ -47,6 +51,8 @@ var TaskListItem = React.createClass(
                       {this.props.task.task}
                 <p>{this.props.task.what}</p>
                 <p>ID:{this.props.task.id}</p>
+                <button className="btn pull-right" onClick={this.btnOnClickEvent}>how</button>
+
             </li>
         );
     }
@@ -65,13 +71,14 @@ var TaskList = React.createClass(
 
 var HomePage = React.createClass(
 {
-    render: function () {
+  render: function () {
         return (
             <div className={"page " + this.props.position}>
                 <Header text="Tasks" back="false"/>
                 <SearchBar searchKey={this.props.searchKey} searchHandler={this.props.searchHandler}/>
                 <div className="content">
                     <TaskList tasks={this.props.tasks}/>
+                    
                 </div>
             </div>
         );

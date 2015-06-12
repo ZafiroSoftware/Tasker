@@ -1,13 +1,8 @@
 var React = require("react");
-var Layout = require('react-layout');
 var TextField = require('material-ui/lib/text-field');
 var AppBar = require("./Components/AppBar.jsx");
-var DatePickers = require("./Components/DatePickers.jsx");
-var CustomerInformation = require("./ComponentsGenerics/CustomerInformation.jsx");
 var ThemeManager = require('material-ui/lib/styles/theme-manager')();
 var Botton = require('material-ui/lib/flat-button');
-
-var DatePicker = require('material-ui/lib/flat-button');
 
 var Address = require("./Components/Address.jsx");
 var DateData = require("./Components/Date.jsx");
