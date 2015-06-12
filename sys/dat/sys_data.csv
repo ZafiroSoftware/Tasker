@@ -1,0 +1,12 @@
+type,JSON
+PERCENT,Number
+MONEY,Number
+NAME,String
+ADDRESS,String
+EMAIL,String
+PHONE,String
+STRING,String
+MONEY,Number
+DATE,date
+PRODUCT,String
+CANTIDAD,Number
