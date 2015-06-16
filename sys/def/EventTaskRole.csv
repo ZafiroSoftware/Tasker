@@ -1,4 +1,4 @@
 event,in,action,what,out,who,use,how
-CustomerOrder,NEW,Take,Tomar orden del cliente,TAKEN,sales-rep,http://192.168.1.118:8000/customerOrder.html,https://facebook.github.io/react/
-CustomerOrder,TAKEN,Charge,Cobrar al cliente,CHARGED,accounting-clerk,http://192.168.1.118:8000/customerOrder.html,https://ui8.net/product/material-ui-kit
-CustomerOrder,NOTIFY,Notify,Notificar rechazo de crèdito al cliente,NOTIFIED,customerService-rep,http://192.168.1.118:8000/customerOrder.html,http://material-ui.com/#/customization/themes
+CustomerOrder,NEW,Take,Tomar orden del cliente,TAKEN,sales-rep,http://192.168.1.111:8000/CustomerOrder.html,https://facebook.github.io/react/
+CustomerOrder,TAKEN,Charge,Cobrar al cliente,CHARGED,accounting-clerk,http://192.168.1.111:8000/CustomerOrder.html,https://ui8.net/product/material-ui-kit
+CustomerOrder,NOTIFY,Notify,Notificar rechazo de crèdito al cliente,NOTIFIED,customerService-rep,http://192.168.1.111:8000/CustomerOrder.html,http://material-ui.com/#/customization/themes

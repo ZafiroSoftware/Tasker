@@ -42,7 +42,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	/**
 	 * @jsx React.DOM
@@ -51,10 +51,18 @@
 	var userdefault;
 
 	var Header = React.createClass(
-	{displayName: "Header",  render: function ()
+	{displayName: "Header",  RedirectTasks:function()
+	   {
+	        window.location = '/events/' + userdefault + '?format=App';
+	   },
+	   render: function ()
 	   { return ( React.createElement("header", {className: "bar bar-nav"}, 
 	               React.createElement("a", {href: "#", className: "icon icon-left-nav pull-left" + (this.props.back==="true"?"":" hidden")}), 
-	               React.createElement("h1", {className: "title"}, this.props.text)
+	               React.createElement("h1", {className: "title"}, this.props.text), 
+	                React.createElement("button", {className: "btn btn-link btn-nav pull-left", onClick: this.RedirectTasks}, 
+	                  React.createElement("span", {className: "icon icon-edit"}), 
+	                 "Events"
+	               )
 	             ));
 	    }
 	});
@@ -79,7 +87,8 @@
 	    ondbClickEvent:function()
 	    {
 	      if(this.props.task.TimeFinish === undefined) //Comprobamos si la tarea esta finalizada
-	      { taskservice.getTask(this.props.task, userdefault);      // Indicamos que estamos tomado la tarea
+	      { this.props.task.who = userdefault;
+	        taskservice.getTask(this.props.task, userdefault);      // Indicamos que estamos tomado la tarea
 	        socket.emit('deletetask', this.props.task);
 	        window.location = this.props.task.use //"/" + this.props.task.task + "?id=" + this.props.task.id;  
 	      }

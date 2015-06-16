@@ -5,10 +5,18 @@ var socket = io.connect();
 var userdefault;
 
 var Header = React.createClass(
-{  render: function ()
+{  RedirectTasks:function()
+   {
+        window.location = '/events/' + userdefault + '?format=App';
+   },
+   render: function ()
    { return ( <header className="bar bar-nav">
                <a href="#" className={"icon icon-left-nav pull-left" + (this.props.back==="true"?"":" hidden")}></a>
                <h1 className="title">{this.props.text}</h1>
+                <button className="btn btn-link btn-nav pull-left" onClick={this.RedirectTasks}>
+                  <span className="icon icon-edit"></span>
+                 Events
+               </button>
              </header>);
     }
 });
@@ -33,7 +41,8 @@ var TaskListItem = React.createClass(
     ondbClickEvent:function()
     {
       if(this.props.task.TimeFinish === undefined) //Comprobamos si la tarea esta finalizada
-      { taskservice.getTask(this.props.task, userdefault);      // Indicamos que estamos tomado la tarea
+      { this.props.task.who = userdefault;
+        taskservice.getTask(this.props.task, userdefault);      // Indicamos que estamos tomado la tarea
         socket.emit('deletetask', this.props.task);
         window.location = this.props.task.use //"/" + this.props.task.task + "?id=" + this.props.task.id;  
       }

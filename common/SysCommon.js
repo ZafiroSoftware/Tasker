@@ -28,6 +28,11 @@ var RolsByActor = function(actorName)
 //funcion que obtiene  los eventos para el actor respecto a su rol
 var events_role = function(actorName){ return RolsByActor(actorName).map(function(items){ return _.filter( sysData.Event_Role(),{role:items}); } )};
 
+//funcion para comprobar si existe el actor
+var ExistsActor = function(actorName)
+{ return( _.contains(_.pluck(sysData.Actor_Role() , 'actor'), actorName)); }
+
+module.exports.ExistsActor = ExistsActor;
 module.exports.RolsByActor = RolsByActor;
 module.exports.ActorByRole = ActorByRole;
 module.exports.SearchEvent = SearchEvent;

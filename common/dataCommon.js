@@ -151,6 +151,7 @@ module.exports.getCustomerByID = function(request, reply)
 //Establece la hora en que se toma la tarea de acuerdo al ID de la instancia de la tarea
 module.exports.getTask = function(request, reply) 
 {
+  console.log(request.payload);
  var fecha = new Date();
  r.connect(config.rethinkdb)
   .then(function(conn)

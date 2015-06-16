@@ -3,6 +3,8 @@ var TextField = require('material-ui/lib/text-field');
 var AppBar = require("./Components/AppBar.jsx");
 var ThemeManager = require('material-ui/lib/styles/theme-manager')();
 var Botton = require('material-ui/lib/flat-button');
+var Tabs = require('material-ui/lib/tabs/tabs');
+var Tab = require('material-ui/lib/tabs/tab');
 
 var Address = require("./Components/Address.jsx");
 var DateData = require("./Components/Date.jsx");
@@ -21,6 +23,29 @@ var Table = FixedDataTable.Table;
 var Column = FixedDataTable.Column;
 
 var FlexBox = require('flexboxgrid');
+
+var Griddle = require("./Components/Griddle.jsx");
+var columnMeta = require('./MetaGrid/CustomerOrderColumnMetaItems.js').CustomerOrderColumnMetaItems;
+var fakeData = require('./MetaGrid/fakeData.js').fakeData;
+var resultsPerPage = 10;
+
+var Sele = require('react-super-select');
+
+var GriddleArticulos = React.createClass({
+      render: function () {
+        var datasource;   
+      datasource = this.props.products;
+      console.log(datasource);
+        return (
+          <div id="table-area">
+             <Griddle results={datasource}
+                      columnMetadata={columnMeta}
+                      resultsPerPage={resultsPerPage}
+                      tableClassName="table"/>
+          </div>
+        )
+      }
+  });
 
 var GridArticulos = React.createClass(
   {  render: function()
@@ -139,15 +164,15 @@ var App = React.createClass({
   },
   ok:function(e)
   {
-    console.log( this.DataCustomerOrder() );
-        $.ajax(
-        {url: "/CustomerOrder_TAKEN", 
-        type: "POST", 
-         data: JSON.stringify( this.DataCustomerOrder() ),
-         success: console.log('hecho'),
-         contentType:"application/json; charset=utf-8", dataType:"json"}
-        );
-    console.log( 'ok');
+   $.ajax(
+   {
+    url: "/CustomerOrder_TAKEN", 
+    type: "POST", 
+    data: JSON.stringify( this.DataCustomerOrder() ),
+    //success: console.log('hecho'),
+    contentType:"application/json; charset=utf-8", dataType:"json"} );
+   
+     history.back();
   },
   DataCustomerOrder:function()
   {
@@ -162,16 +187,53 @@ var App = React.createClass({
    return data; 
   //Falta ShipVia-- ShipCost
   },
+  simulatedAjaxFetch: function() {
+    var testData = [
+            {
+              "id": "5507c0528152e61f3c348d56",
+              "name": "elit laborum et",
+              "size": "Large"
+            },
+            {
+              "id": "5507c0526305bceb0c0e2c7a",
+              "name": "dolor nulla velit",
+              "size": "Medium"
+            }
+            ];
+  // simulate a 2 second ajax fetch for collection data
+  return {
+    then: function(callback) {
+      setTimeout(function() {
+        callback(testData);
+      }, 2000);
+    }
+  };
+},
+handlerExample : function(option) {
+  var output = [
+    'Option Item Chosen = {\n',
+    '\tid: ', option.id, '\n',
+    '\tname: ', option.name, '\n',
+    '\tsize: ', option.size, '\n\t};'];
+  console.log(output.join(''));
+},
   render() {
     return (
-      <div>
-      	<AppBar title ='Customer Order' />
+      <div>    	
+
           <div className="row">
             <div className="col-xs-12">
 
+              <Tabs> 
+                <Tab label="Informacion General" >
                 <div className="row">
                  <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                   <div className="box">
+                   <Sele  placeholder="Make Your Selections" 
+                          ajaxDataFetch={this.simulatedAjaxFetch}
+                          searchable={true}
+                          onChange={this.handlerExample}/>
+
                         <TextField 
                           hintText = 'Ingrese No. de cliente' 
                           floatingLabelText = "Cliente"
@@ -243,7 +305,9 @@ var App = React.createClass({
                     </div>
                   </div>
                  </div>
-
+               
+               </Tab>
+              </Tabs>
                     <TextField 
                         hintText = 'Introduzca la clave del artículo' 
                         floatingLabelText = "Artículo"

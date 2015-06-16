@@ -2,14 +2,21 @@
  * @jsx React.DOM
  */
 var socket = io.connect();
-var usuaridefault = 'JuanHdzL'
-socket.emit('adduser', usuaridefault);
+var userdefault;
 
 var Header = React.createClass(
-{  render: function ()
+{  RedirectTasks:function()
+    {
+        window.location = '/tasks/' + userdefault + '?format=App';
+    },
+    render: function ()
    { return ( <header className="bar bar-nav">
                <a href="#" className={"icon icon-left-nav pull-left" + (this.props.back==="true"?"":" hidden")}></a>
                <h1 className="title">{this.props.text}</h1>
+               <button className="btn btn-link btn-nav pull-left" onClick={this.RedirectTasks}>
+                  <span className="icon icon-compose"></span>
+                 Tasks
+               </button>
              </header>);
     }
 });
@@ -75,7 +82,7 @@ var App = React.createClass({
         }
     },
     searchHandler: function(searchKey) {
-        eventsService.findByName(searchKey,usuaridefault).done(function(tasks) {
+        eventsService.findByName(searchKey,userdefault).done(function(tasks) {
             this.setState({
                 searchKey:searchKey,
                 tasks: tasks,
@@ -83,7 +90,10 @@ var App = React.createClass({
         }.bind(this));
     },
     componentDidMount: function() {
-        eventsService.findByName('',usuaridefault).done(function(tasks) {
+        var pathArray = window.location.pathname.split( '/' );
+        userdefault = pathArray[pathArray.length-1];
+        socket.emit('adduser', userdefault);
+        eventsService.findByName('',userdefault).done(function(tasks) {
             this.setState({
                 tasks: tasks,
                 pages: [<HomePage searchHandler={this.searchHandler} tasks={tasks}/>]});

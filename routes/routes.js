@@ -1,8 +1,17 @@
 var dataCommon = require('../common/dataCommon.js');
+var SysCommon = require('../common/SysCommon.js');
 var PathDefault = '/dist/src';
 var path = require("path");
 
 exports.register = function(server, options, next) {
+   server.route(
+    { method: 'GET', path: '/login/{actor?}', handler: function(request,reply)
+      { 
+       if( SysCommon.ExistsActor(request.params.actor) )
+             {  return reply.redirect('/tasks/' + request.params.actor + '?format=App'); }
+         else{   reply('El actor no existe');}  } 
+    }
+  );
    server.route({ method: 'GET', path: '/events/{actor?}', handler: dataCommon.Events }); 
    server.route({ method: 'GET', path: '/tasks/{actor?}',  handler: dataCommon.Tasks });
    server.route({ method: 'GET', path: '/tasks/{param*}',handler: { directory:  { path: path.join(__dirname, '../') + PathDefault , listing: false, index: true }   } });
@@ -15,7 +24,6 @@ exports.register = function(server, options, next) {
    server.route({ method: 'GET', path: '/getCustomerByID',handler: dataCommon.getCustomerByID } );
    server.route({ method: 'GET', path: '/getProducts',handler: dataCommon.getProducts } );
    server.route({ method: 'GET', path: '/Take_CustomerOrder',  handler: function(request, reply) {  reply.file(__dirname + PathDefault + '/customerOrder.html');  }});
-
     // Callback, completes the registration process
     next();
 }
