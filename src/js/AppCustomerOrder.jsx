@@ -15,6 +15,7 @@ var StringData = require("./Components/String.jsx");
 var Money = require("./Components/Money.jsx");
 var Cantidad = require("./Components/Cantidad.jsx");
 var OkCancel = require("./Components/OkCancel.jsx");
+var SearchEntity = require("./Components/SearchEntity.jsx");
 
 Object.assign = Object.assign || require('object.assign');
 var FixedDataTable = require('fixed-data-table');
@@ -29,7 +30,9 @@ var columnMeta = require('./MetaGrid/CustomerOrderColumnMetaItems.js').CustomerO
 var fakeData = require('./MetaGrid/fakeData.js').fakeData;
 var resultsPerPage = 10;
 
-var Sele = require('react-super-select');
+var SearchCustomer = require('react-super-select');
+var DropzoneComponent = require('react-dropzone-component/lib/dropzone');
+//var Dropzone = require('rc-dropzone');
 
 var GriddleArticulos = React.createClass({
       render: function () {
@@ -46,6 +49,77 @@ var GriddleArticulos = React.createClass({
         )
       }
   });
+
+var componentConfig = {
+    allowedFiletypes: ['.*'],
+    showFiletypeIcon: true,
+    postUrl: '/loadFiles'
+};
+
+var callbackArray = [
+    function () {
+        console.log('Look Ma, I\'m a callback in an array!');
+    },
+    function () {
+        console.log('Wooooow!');
+    }
+];
+ 
+var simpleCallBack = function () {
+    console.log('I\'m a simple callback');
+};
+
+var djsConfig = {
+    addRemoveLinks: true
+};
+var eventHandlers = {
+    // All of these receive the event as first parameter:
+    drop: callbackArray,
+    dragstart: null,
+    dragend: null,
+    dragenter: null,
+    dragover: null,
+    dragleave: null,
+    // All of these receive the file as first parameter:
+    addedfile: simpleCallBack,
+    removedfile: null,
+    thumbnail: null,
+    error: null,
+    processing: null,
+    uploadprogress: null,
+    sending: null,
+    success: null,
+    complete: null,
+    canceled: null,
+    maxfilesreached: null,
+    maxfilesexceeded: null,
+    // All of these receive a list of files as first parameter 
+    // and are only called if the uploadMultiple option 
+    // in djsConfig is true:
+    processingmultiple: null,
+    sendingmultiple: null,
+    successmultiple: null,
+    completemultiple: null,
+    canceledmultiple: null,
+    // Special Events
+    totaluploadprogress: null,
+    reset: null,
+    queuecompleted: null
+}
+/*var djsConfig = {
+  previewTemplate: React.renderToStaticMarkup(
+    <div className="dz-preview dz-file-preview">
+      <div className="dz-details">
+        <div className="dz-filename"><span data-dz-name></span></div>
+        <img data-dz-thumbnail />
+      </div>
+      <div className="dz-progress"><span className="dz-upload" data-dz-uploadprogress></span></div>
+      <div className="dz-success-mark"><span>✔</span></div>
+      <div className="dz-error-mark"><span>✘</span></div>
+      <div className="dz-error-message"><span data-dz-errormessage></span></div>
+    </div>
+  )
+}*/
 
 var GridArticulos = React.createClass(
   {  render: function()
@@ -154,7 +228,7 @@ var App = React.createClass({
       this.refs.Precio.setValue('');
       this.refs.Cantidad.setValue(1.0);
   },
-   componentDidMount: function() 
+  componentDidMount: function() 
   { 
     this.refs.DateData.setDate(new Date());
   },
@@ -191,21 +265,22 @@ var App = React.createClass({
     var testData = [
             {
               "id": "5507c0528152e61f3c348d56",
-              "name": "elit laborum et",
-              "size": "Large"
+              "name": "elit laborum et"
             },
             {
               "id": "5507c0526305bceb0c0e2c7a",
-              "name": "dolor nulla velit",
-              "size": "Medium"
+              "name": "dolor nulla velit"
             }
             ];
   // simulate a 2 second ajax fetch for collection data
   return {
     then: function(callback) {
-      setTimeout(function() {
-        callback(testData);
-      }, 2000);
+       customerService
+          .findByName('')
+          .done(function(customers)
+           { console.log(customers[0]); callback(customers); }
+          );
+
     }
   };
 },
@@ -213,14 +288,16 @@ handlerExample : function(option) {
   var output = [
     'Option Item Chosen = {\n',
     '\tid: ', option.id, '\n',
-    '\tname: ', option.name, '\n',
-    '\tsize: ', option.size, '\n\t};'];
+    '\Nombre: ', option.name, '\n\t};'];
   console.log(output.join(''));
 },
   render() {
     return (
       <div>    	
-
+        <DropzoneComponent config={componentConfig} 
+                       eventHandlers={eventHandlers} 
+                       djsConfig={djsConfig} 
+                       maxFilesize = {100} />,
           <div className="row">
             <div className="col-xs-12">
 
@@ -229,10 +306,11 @@ handlerExample : function(option) {
                 <div className="row">
                  <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                   <div className="box">
-                   <Sele  placeholder="Make Your Selections" 
-                          ajaxDataFetch={this.simulatedAjaxFetch}
-                          searchable={true}
-                          onChange={this.handlerExample}/>
+
+                      <SearchEntity 
+                         table='Customer'
+                         keyfield = 'id'
+                         field = 'Nombre'/>
 
                         <TextField 
                           hintText = 'Ingrese No. de cliente' 

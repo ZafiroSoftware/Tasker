@@ -225,4 +225,98 @@ module.exports.CustomerOrder_TAKEN = function (request, reply)
   })
 };
 
+module.exports.Prospeccion_TAKEN = function (request, reply) 
+{
+ /* var fecha = new Date();
+ //Actualiza la hora en que se termino la tarea
+ r.connect(config.rethinkdb)
+  .then(function(conn)
+  {
+    r.table('IssuedTask')
+     .get(request.payload.id)
+     .update({TimeFinish: fecha})
+     .run(conn)   
+  })
+
+ r.connect(config.rethinkdb)
+  .then(function(conn)
+  {
+    r.table('IssuedTask')
+     .filter({id:request.payload.id})
+     .run(conn)
+     .then(function(result){ return result.toArray();})
+     .then(function(result){ searchTask({'event':result[0].event, 'out': result[0].out}); }) 
+  })
+*/
+  r.connect(config.rethinkdb)
+  .then(function(conn)
+  {
+    r.table('Prospectos')
+     .insert(request.payload)
+     .run(conn)   
+  })
+};
+
+module.exports.Cliente_TAKEN = function (request, reply) 
+{
+ /* var fecha = new Date();
+ //Actualiza la hora en que se termino la tarea
+ r.connect(config.rethinkdb)
+  .then(function(conn)
+  {
+    r.table('IssuedTask')
+     .get(request.payload.id)
+     .update({TimeFinish: fecha})
+     .run(conn)   
+  })
+
+ r.connect(config.rethinkdb)
+  .then(function(conn)
+  {
+    r.table('IssuedTask')
+     .filter({id:request.payload.id})
+     .run(conn)
+     .then(function(result){ return result.toArray();})
+     .then(function(result){ searchTask({'event':result[0].event, 'out': result[0].out}); }) 
+  })
+*/
+  r.connect(config.rethinkdb)
+  .then(function(conn)
+  {
+    r.table('Clientes')
+     .insert(request.payload)
+     .run(conn)   
+  })
+};
+
+module.exports.getCustomerSearch = function(request, reply)
+{
+  var name = request.query.name;
+  console.log(name);
+  r.connect(config.rethinkdb)
+   .then(function(conn)
+   { r.table('Customer')
+      .filter(  function(f){ return f('Nombre').match(name) } )
+      .pluck('id', 'Nombre')
+      .map({ id: r.row("id"), name: r.row("Nombre") } )
+      .run(conn)
+      .then(function(result){ return result.toArray();})
+      .then(function(result){ return reply(result); }) 
+   });
+}
+
+module.exports.getSearch = function(request, reply)
+{
+  console.log(request.query);
+  r.connect(config.rethinkdb)
+   .then(function(conn)
+   { r.table(request.query.table)
+      .filter(  function(f){ return f(request.query.field).match(request.query.search) } )
+      .pluck(request.query.key, request.query.field)
+      .map({ id: r.row(request.query.key), name: r.row(request.query.field) } )
+      .run(conn)
+      .then(function(result){ return result.toArray();})
+      .then(function(result){ return reply(result); }) 
+   });
+}
 module.exports.existsElement = existsElement;

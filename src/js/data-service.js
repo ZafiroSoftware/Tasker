@@ -35,6 +35,17 @@ customerService = (function ()
               //findById: function(id) { return $.ajax(url + "/getCustomerByID/" + id);},
              findById: function(id) { return $.ajax({ url: baseURL + "/getCustomerByID" , data: {id:id} }); },
 
-                 findByName: function(searchKey) {return $.ajax({url: baseURL + "/" + "getCustomer", data: {name: searchKey}}); }
+                 findByName: function(searchKey) {return $.ajax({url: baseURL + "/" + "getCustomerSearch", data: {name: searchKey}}); }
+               };
+}());
+
+Search = (function ()
+{
+        var baseURL = "";
+        return {
+              //findById: function(id) { return $.ajax(url + "/getCustomerByID/" + id);},
+             findById: function(id) { return $.ajax({ url: baseURL + "/getCustomerByID" , data: {id:id} }); },
+
+                 findByName: function(searchKey,table,key,field) {return $.ajax({url: baseURL + "/" + "getSearch", data: { search: searchKey, table:table , key:key, field:field } }); }
                };
 }());
