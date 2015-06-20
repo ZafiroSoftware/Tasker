@@ -2,7 +2,7 @@ var dataCommon = require('../common/dataCommon.js');
 var SysCommon = require('../common/SysCommon.js');
 var PathDefault = '/dist/src';
 var path = require("path");
-var formidable = require("formidable");
+//var formidable = require("formidable");
 
 function LoadFiles2(req,reply)
 {
@@ -112,7 +112,7 @@ var logout = function (request, reply) {
 
 exports.register = function(server, options, next) {
 
-    server.register(require('hapi-auth-cookie'), function (err)
+    /*server.register(require('hapi-auth-cookie'), function (err)
     { server.auth.strategy('session', 'cookie', 
       {
         password: 'secret',
@@ -155,9 +155,10 @@ server.route([
             auth: 'session'
         }
     }
-]);
-server.route({ method: 'POST', path: '/loadFiles',handler: function(req,reply) {new MulterImpl({}).init(); return reply({ status: 'ok' });}    } );
-  //server.route({ method: 'POST', path: '/loadFiles',handler: function(request, reply){ console.log(request); return reply({ status: 'ok' }); }  } );
+]);*/
+
+//server.route({ method: 'POST', path: '/loadFiles',handler: function(req,reply) {new MulterImpl({}).init(); return reply({ status: 'ok' });}    } );
+server.route({ method: 'POST', path: '/loadFiles',handler: function(request, reply){   return reply({ status: 'ok' }); }  } );
    //server.route(
    // { method: 'GET', path: '/login/{actor?}', handler: function(request,reply)
    //   { 
@@ -167,8 +168,9 @@ server.route({ method: 'POST', path: '/loadFiles',handler: function(req,reply) {
    // }
   //);
 
-   server.route({ method: 'GET', path: '/events/{actor?}', config: { handler: dataCommon.Events,  auth: 'session' } } ); 
-   server.route({ method: 'GET', path: '/tasks/{actor?}',  config: { handler: dataCommon.Tasks ,  auth: 'session' } } );
+   //server.route({ method: 'GET', path: '/events/{actor?}', config: { handler: dataCommon.Events,  auth: 'session' } } ); 
+   server.route({ method: 'GET', path: '/events/{actor?}', config: { handler: dataCommon.Events } } ); 
+   server.route({ method: 'GET', path: '/tasks/{actor?}',  config: { handler: dataCommon.Tasks  } } );
    server.route({ method: 'GET', path: '/tasks/{param*}',handler: { directory:  { path: path.join(__dirname, '../') + PathDefault , listing: false, index: true }   } });
    server.route({ method: 'GET', path: '/events/{param*}',handler: { directory:  { path: path.join(__dirname, '../') + PathDefault , listing: false, index: true }   } });
    server.route({ method: 'GET', path: '/{param*}',handler: { directory:  { path: path.join(__dirname, '../') + PathDefault , listing: false, index: true }   } });

@@ -26,6 +26,16 @@ Object.assign = Object.assign || require('object.assign');
 var FixedDataTable = require('fixed-data-table');
 require('fixed-data-table/dist/fixed-data-table.css');
 var Table = FixedDataTable.Table;
+var SearchEntity = require("./Components/SearchEntity.jsx");
+
+var lkpCliente = require("./Components/SearchEntity.jsx");
+var lkpVendedor = require("./Components/SearchEntity.jsx");
+var lkpArquitecto = require("./Components/SearchEntity.jsx");
+var lkpTipoConstruccion = require("./Components/SearchEntity.jsx");
+var lkpFaseProyecto = require("./Components/SearchEntity.jsx");
+var lkpTipoProspecto = require("./Components/SearchEntity.jsx");
+var lkpTipoProyecto = require("./Components/SearchEntity.jsx");
+
 var Column = FixedDataTable.Column;
 
 var FlexBox = require('flexboxgrid');
@@ -70,6 +80,78 @@ var GridCroquisVentas = React.createClass(
       }
   });
   
+//Manejo de importación de archivo
+var  DropzoneComponent = require('react-dropzone-component/lib/dropzone');
+
+var myDropzone;
+
+function initCallback (dropzone) {
+    myDropzone = dropzone;
+}
+
+function removeFile () {
+    if (myDropzone) {
+        myDropzone.removeFile();
+    }
+}
+
+var componentConfig = {
+    allowedFiletypes: ['.*'],
+    showFiletypeIcon: true,
+    postUrl: '/loadFiles'
+};
+
+var callbackArray = [
+    function () {
+        console.log('Look Ma, I\'m a callback in an array!');
+    },
+    function () {
+        console.log('Wooooow!');
+    }
+];
+ 
+var simpleCallBack = function () {
+    console.log('I\'m a simple callback');
+};
+
+var djsConfig = {
+    addRemoveLinks: true
+};
+var eventHandlers = {
+    // All of these receive the event as first parameter:
+    drop: callbackArray,
+    dragstart: null,
+    dragend: null,
+    dragenter: null,
+    dragover: null,
+    dragleave: null,
+    // All of these receive the file as first parameter:
+    addedfile: simpleCallBack,
+    removedfile: null,
+    thumbnail: null,
+    error: null,
+    processing: null,
+    uploadprogress: null,
+    sending: null,
+    success: null,
+    complete: null,
+    canceled: null,
+    maxfilesreached: null,
+    maxfilesexceeded: null,
+    // All of these receive a list of files as first parameter 
+    // and are only called if the uploadMultiple option 
+    // in djsConfig is true:
+    processingmultiple: null,
+    sendingmultiple: null,
+    successmultiple: null,
+    completemultiple: null,
+    canceledmultiple: null,
+    // Special Events
+    totaluploadprogress: null,
+    reset: null,
+    queuecompleted: null
+}
+
 var App = React.createClass({
    getInitialState: function()
   {
@@ -84,7 +166,6 @@ var App = React.createClass({
     return { muiTheme: ThemeManager.getCurrentTheme() };
   },
   
-   
    AddPlantasElevaciones: function()
   { var PlantaElevacion = [{  "Documento": this.refs.DocumentoPlantasElevaciones.getValue(),  "Archivo": this.refs.ArchivoPlantasElevaciones.getValue()
                   }];
@@ -145,24 +226,25 @@ var App = React.createClass({
         { 
 			'FolioID': this.refs.FolioID.getValue(),		  
 			'Fecha': this.refs.Fecha.getDate(),
-			'Nombre': this.refs.Nombre.getValue(),
+			'Cliente': this.refs.lkpCliente.getValue(),
 			'DireccionObra': this.refs.DireccionObra.getValue(),
 			'Correo': this.refs.Correo.getValue(),
 			'Telefono': this.refs.Telefono.getValue(),
-			'NombreArquitecto': this.refs.NombreArquitecto.getValue(),
+			'Arquitecto': this.refs.lkpArquitecto.getValue(),
 			'TelefonoArquitecto': this.refs.TelefonoArquitecto.getValue(),
 			'CorreoArquitecto': this.refs.CorreoArquitecto.getValue(),
 			'FechaVisitaObra': this.refs.FechaVisitaObra.getDate(), 
 			'FechaEntregaPlanos': this.refs.FechaEntregaPlanos.getDate(), 
 			//'Urgente': this.refs.Checkbox.isChecked(), 			
-			'TipoConstruccion': this.refs.TipoConstruccion.getValue(),          
-			'TipoProyecto': this.refs.TipoProyecto.getValue(),
-			'TipoProspecto': this.refs.TipoProspecto.getValue(),          
-			'FaseProyecto': this.refs.FaseProyecto.getValue(),			
-			'Vendedor': this.refs.Vendedor.getValue(),
-		    'Notas': this.refs.Notas.getValue(),	
-			"CroquisVentas" : this.state.products,
-			"PlantasElevaciones" : this.state.plantas
+			'TipoConstruccion': this.refs.lkpTipoConstruccion.getValue(),          
+			'TipoProyecto': this.refs.lkpTipoProyecto.getValue(),
+			'TipoProspecto': this.refs.lkpTipoProspecto.getValue(),          
+			'FaseProyecto': this.refs.lkpFaseProyecto.getValue(),			
+			'Vendedor': this.refs.lkpVendedor.getValue(),
+		    'Notas': this.refs.Notas.getValue() 
+			//,	
+			//"CroquisVentas" : this.state.products,
+			//"PlantasElevaciones" : this.state.plantas
        };
    return data; 
   //Falta ShipVia-- ShipCost
@@ -171,32 +253,33 @@ render() {
     return (
 		
 			
-			<div>    	
+		<div>    	
 			
 			<AppBar title ='Registro de Cliente' />
 			
 			<Tabs> 
 				<Tab label="Generales" > 
 					<div className="row">
-                <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
-				<div className="box">
-                <TextField 
+						<div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
+							<div className="box">
+								<TextField 
 						
-                    hintText = '' 
-                    floatingLabelText = "Folio"
-                    multiLine = {false}                           
-                    ref = 'FolioID'/>
-                  </div>
-                 </div>
-                    <div className="col-xs-4">
-                      <div className="box">
-                          <DateData
-                            hintText = 'Fecha' 
-							floatingLabelText = "Fecha"
-                            mode = 'portrait' 
-                            ref = 'Fecha'/>
-                     </div>
-                    </div>
+									hintText = '' 
+									floatingLabelText = "Folio"
+									multiLine = {false}                           
+									ref = 'FolioID'/>
+							</div>
+						</div>
+						
+						<div className="col-xs-4">
+							<div className="box">
+							  <DateData
+								hintText = 'Fecha' 
+								floatingLabelText = "Fecha"
+								mode = 'portrait' 
+								ref = 'Fecha'/>
+							</div>
+						</div>
                 </div>
 				
 			<div className="Title">
@@ -206,11 +289,11 @@ render() {
                  <div className="row">				 			  
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
-                     <Name 
-                         hintText = 'Introduzca el nombre del cliente'
-                         floatingLabelText = "Nombre"
-                         multiLine = {false}
-                         ref = 'Nombre'/>
+                         <label >Cliente</label>            
+						 <lkpCliente
+							table = 'Customer'
+							keyfield ='id'
+							field = 'Nombre'/>
                     </div>
                    </div> 
 
@@ -225,8 +308,7 @@ render() {
                    </div> 
 				  
 				   
-                 </div>
-				 
+                 </div>				 
 				  <div className="row">				 			  
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
@@ -241,7 +323,7 @@ render() {
 					<div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
                      <Correo 
-                         hintText = 'Introduzca la correo del cliente'
+                         hintText = 'Introduzca el correo del cliente'
                          floatingLabelText = "Correo"
                          multiLine = {false}
                          ref = 'Correo'/>
@@ -257,11 +339,11 @@ render() {
 				 <div className="row">				 			  
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
-                     <Name 
-                         hintText = 'Introduzca el nombre del arquitecto'
-                         floatingLabelText = "Nombre"
-                         multiLine = {false}
-                         ref = 'NombreArquitecto'/>
+					<label >Arquitecto</label>
+                     <lkpArquitecto
+							table = 'Architects'
+							keyfield ='id'
+							field = 'Nombre'/>
                     </div>
                    </div>                 
                  </div>
@@ -330,21 +412,21 @@ render() {
 				 <div className="row">  
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
-                    <LookUp 
-                        hintText = 'Introduzca el tipo de construcción' 
-                        floatingLabelText = "Tipo de Construcción"
-                        multiLine = {false}
-                        ref = 'TipoConstruccion' />
+					<label >Tipo de Construcción</label>
+						<lkpTipoConstruccion
+							table = 'TypeConstruction'
+							keyfield ='id'
+							field = 'Nombre'/>
                     </div>
                   </div>
 
 				<div className="col-xs-6">
-                    <div className="box">
-                    <LookUp 
-                        hintText = 'Introduzca el tipo de proyecto' 
-                        floatingLabelText = "Tipo de Proyecto"
-                        multiLine = {false}
-                        ref = 'TipoProyecto' />
+                    <div className="box">				
+                    <label >Tipo de Proyecto</label>
+                    <lkpTipoProyecto
+							table = 'TypeProject'
+							keyfield ='id'
+							field = 'Nombre'/>
                     </div>
                   </div>				  
                  </div>
@@ -352,21 +434,21 @@ render() {
 				<div className="row">  
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
-                    <LookUp 
-                        hintText = 'Introduzca el tipo de prospecto' 
-                        floatingLabelText = "Tipo de Prospecto"
-                        multiLine = {false}
-                        ref = 'TipoProspecto' />
+                    <label >Tipo de Prospecto</label>
+						<lkpTipoProspecto
+							table = 'TypeProspectus'
+							keyfield ='id'
+							field = 'Nombre'/>
                     </div>
                   </div>
 				  
 				  <div className="col-xs-6">
                     <div className="box">
-                      <LookUp 
-                         hintText = 'Introduzca la fase del proyecto' 
-                         floatingLabelText = "Fase del proyecto"
-                         multiLine = {false}
-                         ref = 'FaseProyecto' />
+                       <label >Fase del Proyecto</label>
+						<lkpFaseProyecto
+							table = 'Phase'
+							keyfield ='id'
+							field = 'Nombre'/>
                    </div>
                   </div>				  
                  </div>
@@ -374,11 +456,11 @@ render() {
 				  <div className="row">  
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
-                    <LookUp 
-                        hintText = 'Introduzca el vendedor' 
-                        floatingLabelText = "Vendedor"
-                        multiLine = {false}
-                        ref = 'Vendedor' />
+						 <label >Vendedor</label>
+							<lkpVendedor
+								table = 'Seller'
+								keyfield ='id'
+								field = 'Nombre'/>
                     </div>
                   </div>			  
 				  <div className="col-xs-6">
@@ -400,11 +482,10 @@ render() {
                         floatingLabelText = "Documento"
                         multiLine = {false}
                         ref = 'DocumentoCroquis' />
-                    <StringData 
-                        hintText = 'Introduzca el archivo' 
-                        floatingLabelText = "Archivo"
-                        multiLine = {false}
-                        ref = 'ArchivoCroquis' />
+						
+                     <DropzoneComponent config={componentConfig} 
+                       eventHandlers={eventHandlers} 
+                       djsConfig={djsConfig} />,
                     
                     <Botton label="Agregar"  
                         secondary={true}

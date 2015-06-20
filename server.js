@@ -23,7 +23,7 @@ sysData.InitCarga(); //Inicializamos la cargar de archivos csv
 var PathDefault = '/dist/src';
 var i = 0;
 var socketServer;
-server.connection({ host: 'loacalhost', port: 8000  },
+server.connection({ host: '192.168.1.111', port: 8000  },
                   { cors: true }, 
                   { connections: { routes: { files: {relativeTo: Path.join(__dirname, PathDefault)} } } }
                  );

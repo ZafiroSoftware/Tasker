@@ -33,6 +33,8 @@ var resultsPerPage = 10;
 var SearchCustomer = require('react-super-select');
 var DropzoneComponent = require('react-dropzone-component/lib/dropzone');
 //var Dropzone = require('rc-dropzone');
+//var Select = require('react-select');
+
 
 var GriddleArticulos = React.createClass({
       render: function () {
@@ -49,6 +51,18 @@ var GriddleArticulos = React.createClass({
         )
       }
   });
+
+var myDropzone;
+
+function initCallback (dropzone) {
+    myDropzone = dropzone;
+}
+
+function removeFile () {
+    if (myDropzone) {
+        myDropzone.removeFile();
+    }
+}
 
 var componentConfig = {
     allowedFiletypes: ['.*'],
@@ -145,6 +159,7 @@ var GridArticulos = React.createClass(
       }
   });
 
+
 var App = React.createClass({
    getInitialState: function()
   {
@@ -159,11 +174,11 @@ var App = React.createClass({
     return { muiTheme: ThemeManager.getCurrentTheme() };
   },
   ChangeCustomerID: function(e)
-  {
+  {console.log( this.refs.CustomerSearch.getValue() );
     if(e.keyCode === 13)
     { customerService.findById( this.refs.customerID.getValue() ).done(function(customers)
       {if ((customers) && customers.length > 0)
-        { console.log( customers );
+        { 
           this.refs.Nombre.setValue(customers[0].Nombre);
           this.refs.Direccion.setValue(customers[0].Direccion);
           this.refs.email.setValue(customers[0].Email);
@@ -296,8 +311,7 @@ handlerExample : function(option) {
       <div>    	
         <DropzoneComponent config={componentConfig} 
                        eventHandlers={eventHandlers} 
-                       djsConfig={djsConfig} 
-                       maxFilesize = {100} />,
+                       djsConfig={djsConfig} />,
           <div className="row">
             <div className="col-xs-12">
 
@@ -306,11 +320,14 @@ handlerExample : function(option) {
                 <div className="row">
                  <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                   <div className="box">
+                    
+                      
 
                       <SearchEntity 
                          table='Customer'
                          keyfield = 'id'
-                         field = 'Nombre'/>
+                         field = 'Nombre'
+                         ref = 'CustomerSearch'/>
 
                         <TextField 
                           hintText = 'Ingrese No. de cliente' 

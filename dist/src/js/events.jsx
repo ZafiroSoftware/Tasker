@@ -7,8 +7,8 @@ var userdefault;
 var Header = React.createClass(
 {  RedirectTasks:function()
     {
-        window.open('/events/' + userdefault + '?format=App', '_self').close();
-        //window.location = '/tasks/' + userdefault + '?format=App';
+        //window.open('/events/' + userdefault + '?format=App', '_self').close();
+        window.location = '/tasks/' + userdefault + '?format=App';
     },
     render: function ()
    { return ( <header className="bar bar-nav">
