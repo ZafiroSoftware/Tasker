@@ -150,17 +150,16 @@ module.exports.getCustomerByID = function(request, reply)
 //---------------------------------------------------------------------------------------------------------------------------------
 //Establece la hora en que se toma la tarea de acuerdo al ID de la instancia de la tarea
 module.exports.getTask = function(request, reply) 
-{
-  console.log(request.payload);
- var fecha = new Date();
- r.connect(config.rethinkdb)
-  .then(function(conn)
-  {
-    r.table('IssuedTask')
-     .get(request.payload.id)
-     .update({TimeTaken: fecha , who: request.payload.who})
-     .run(conn)   
-  })
+{var fecha = new Date();
+     r.connect(config.rethinkdb)
+      .then(function(conn)
+      {
+        r.table('IssuedTask')
+         .get(request.payload.id)
+         .update({TimeTaken: fecha , who: request.payload.who})
+         .run(conn)   
+      })
+    //return reply.redirect()
 };
 
 //---------------------------------------------------------------------------------------------------------------------------------           
@@ -227,7 +226,7 @@ module.exports.CustomerOrder_TAKEN = function (request, reply)
 
 module.exports.Prospeccion_TAKEN = function (request, reply) 
 {
- /* var fecha = new Date();
+  var fecha = new Date();
  //Actualiza la hora en que se termino la tarea
  r.connect(config.rethinkdb)
   .then(function(conn)
@@ -247,7 +246,7 @@ module.exports.Prospeccion_TAKEN = function (request, reply)
      .then(function(result){ return result.toArray();})
      .then(function(result){ searchTask({'event':result[0].event, 'out': result[0].out}); }) 
   })
-*/
+
   r.connect(config.rethinkdb)
   .then(function(conn)
   {
@@ -259,7 +258,7 @@ module.exports.Prospeccion_TAKEN = function (request, reply)
 
 module.exports.Cliente_TAKEN = function (request, reply) 
 {
- /* var fecha = new Date();
+  var fecha = new Date();
  //Actualiza la hora en que se termino la tarea
  r.connect(config.rethinkdb)
   .then(function(conn)
@@ -279,7 +278,7 @@ module.exports.Cliente_TAKEN = function (request, reply)
      .then(function(result){ return result.toArray();})
      .then(function(result){ searchTask({'event':result[0].event, 'out': result[0].out}); }) 
   })
-*/
+
   r.connect(config.rethinkdb)
   .then(function(conn)
   {
@@ -306,9 +305,7 @@ module.exports.getCustomerSearch = function(request, reply)
 }
 
 module.exports.getSearch = function(request, reply)
-{
-  console.log(request.query);
-  r.connect(config.rethinkdb)
+{ r.connect(config.rethinkdb)
    .then(function(conn)
    { r.table(request.query.table)
       .filter(  function(f){ return f(request.query.field).match(request.query.search) } )
@@ -319,4 +316,5 @@ module.exports.getSearch = function(request, reply)
       .then(function(result){ return reply(result); }) 
    });
 }
+
 module.exports.existsElement = existsElement;

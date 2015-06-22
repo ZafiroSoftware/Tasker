@@ -30,7 +30,7 @@ var columnMeta = require('./MetaGrid/CustomerOrderColumnMetaItems.js').CustomerO
 var fakeData = require('./MetaGrid/fakeData.js').fakeData;
 var resultsPerPage = 10;
 
-var SearchCustomer = require('react-super-select');
+//var SearchCustomer = require('react-super-select');
 var DropzoneComponent = require('react-dropzone-component/lib/dropzone');
 //var Dropzone = require('rc-dropzone');
 //var Select = require('react-select');
@@ -249,18 +249,26 @@ var App = React.createClass({
   },
   cancel: function(e)
   {
-    console.log( 'cancel');
+    var regex = /[?&]([^=#]+)=([^&#]*)/g,
+       url = window.location.href, params = {}, match;
+       while(match = regex.exec(url)) {params[match[1]] = match[2]; }
+    var data = this.DataCustomerOrder();
+    data.id = params.id;
+    console.log( data);
   },
   ok:function(e)
-  {
+  {var regex = /[?&]([^=#]+)=([^&#]*)/g,
+       url = window.location.href, params = {}, match;
+       while(match = regex.exec(url)) {params[match[1]] = match[2]; }
+    var data = this.DataCustomerOrder();
+    data.id = params.id;
    $.ajax(
    {
-    url: "/CustomerOrder_TAKEN", 
-    type: "POST", 
-    data: JSON.stringify( this.DataCustomerOrder() ),
-    //success: console.log('hecho'),
-    contentType:"application/json; charset=utf-8", dataType:"json"} );
-   
+      url: "/CustomerOrder_TAKEN", 
+      type: "POST", 
+      data: JSON.stringify( data ),
+      //success: console.log('hecho'),
+      contentType:"application/json; charset=utf-8", dataType:"json"} );
      history.back();
   },
   DataCustomerOrder:function()

@@ -93,15 +93,19 @@ var App = React.createClass({
   },
   ok:function(e)
   {
-    console.log( this.DataProspeccion() );
-        $.ajax(
+    var regex = /[?&]([^=#]+)=([^&#]*)/g,
+       url = window.location.href, params = {}, match;
+       while(match = regex.exec(url)) {params[match[1]] = match[2]; }
+    var data = this.DataCustomerOrder();
+        data.id = params.id;
+  $.ajax(
         {url: "/Prospeccion_TAKEN", 
         type: "POST", 
-         data: JSON.stringify( this.DataProspeccion() ),
+         data: JSON.stringify( data ),
          success: console.log('hecho'),
          contentType:"application/json; charset=utf-8", dataType:"json"}
         );
-    console.log( 'ok');
+    history.back();
   },
   DataProspeccion:function()
   {

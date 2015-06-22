@@ -1,7 +1,7 @@
-actor,role,
-JuanHdzL,phone-opr,
-RocioTamezJ,sales-rep,
-JuanHdzL,accounting-clerk,
-JoseMiguelFariasH,warehouse-clerk,
-RocioTamezJ,customerService-rep,
-JuanHdzL,sales-rep,
+actor,role,pass
+JuanHdzL,phone-opr,123
+RocioTamezJ,sales-rep,123
+JuanHdzL,accounting-clerk,123
+JoseMiguelFariasH,warehouse-clerk,123
+RocioTamezJ,customerService-rep,123
+JuanHdzL,sales-rep,123

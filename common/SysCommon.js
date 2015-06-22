@@ -32,8 +32,12 @@ var events_role = function(actorName){ return RolsByActor(actorName).map(functio
 var ExistsActor = function(actorName)
 { return( _.contains(_.pluck(sysData.Actor_Role() , 'actor'), actorName)); }
 
+var SearchActor = function(actorName)
+{ return _.filter(sysData.Actor_Role() ,{actor:actorName}); }
+
 module.exports.ExistsActor = ExistsActor;
 module.exports.RolsByActor = RolsByActor;
 module.exports.ActorByRole = ActorByRole;
 module.exports.SearchEvent = SearchEvent;
 module.exports.events_role = events_role;
+module.exports.SearchActor = SearchActor;

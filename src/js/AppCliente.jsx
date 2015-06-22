@@ -28,16 +28,15 @@ require('fixed-data-table/dist/fixed-data-table.css');
 var Table = FixedDataTable.Table;
 var SearchEntity = require("./Components/SearchEntity.jsx");
 
-var lkpCliente = require("./Components/SearchEntity.jsx");
-var lkpVendedor = require("./Components/SearchEntity.jsx");
-var lkpArquitecto = require("./Components/SearchEntity.jsx");
-var lkpTipoConstruccion = require("./Components/SearchEntity.jsx");
-var lkpFaseProyecto = require("./Components/SearchEntity.jsx");
-var lkpTipoProspecto = require("./Components/SearchEntity.jsx");
-var lkpTipoProyecto = require("./Components/SearchEntity.jsx");
+var LkpCliente = require("./Components/SearchEntity.jsx");
+var LkpVendedor = require("./Components/SearchEntity.jsx");
+var LkpArquitecto = require("./Components/SearchEntity.jsx");
+var LkpTipoConstruccion = require("./Components/SearchEntity.jsx");
+var LkpFaseProyecto = require("./Components/SearchEntity.jsx");
+var LkpTipoProspecto = require("./Components/SearchEntity.jsx");
+var LkpTipoProyecto = require("./Components/SearchEntity.jsx");
 
 var Column = FixedDataTable.Column;
-
 var FlexBox = require('flexboxgrid');
 
 var GridCroquisVentas = React.createClass(
@@ -153,7 +152,7 @@ var eventHandlers = {
 }
 
 var App = React.createClass({
-   getInitialState: function()
+  getInitialState: function()
   {
     return {products : [], plantas :[], sidebarWidth: 330}
   },
@@ -165,60 +164,61 @@ var App = React.createClass({
   {
     return { muiTheme: ThemeManager.getCurrentTheme() };
   },
-  
    AddPlantasElevaciones: function()
-  { var PlantaElevacion = [{  "Documento": this.refs.DocumentoPlantasElevaciones.getValue(),  "Archivo": this.refs.ArchivoPlantasElevaciones.getValue()
-                  }];
+  { var PlantaElevacion = 
+            [{  "Documento": this.refs.DocumentoPlantasElevaciones.getValue(),  
+                "Archivo": this.refs.ArchivoPlantasElevaciones.getValue()
+             }];
     this.state.plantas.push(PlantaElevacion[0]);
     this.setState();
-   
     this.CleanPlantasElevaciones();
   },
   CleanPlantasElevaciones:function()
   {
-       this.refs.DocumentoPlantasElevaciones.setValue('');
-	   this.refs.ArchivoPlantasElevaciones.setValue('');
-	    },
-   componentDidMount: function() 
-   
+   this.refs.DocumentoPlantasElevaciones.setValue('');
+	 this.refs.ArchivoPlantasElevaciones.setValue('');
+	},
+  componentDidMount: function() 
   { 
-    this.refs.Fecha.setDate(new Date());
+   this.refs.Fecha.setDate(new Date());
   },
-  
-   
   AddCroquis: function()
-  { var Croquis = [{  "Documento": this.refs.DocumentoCroquis.getValue(),  "Archivo": this.refs.ArchivoCroquis.getValue()
-                  }];
+  { var Croquis =
+        [{  "Documento": this.refs.DocumentoCroquis.getValue(),  
+            "Archivo": this.refs.ArchivoCroquis.getValue()
+        }];
     this.state.products.push(Croquis[0]);
     this.setState();
-   
     this.CleanCroquis();
   },
   CleanCroquis:function()
   {
-       this.refs.DocumentoCroquis.setValue('');
-	   this.refs.ArchivoCroquis.setValue('');
-	    },
-   componentDidMount: function() 
-   
+    this.refs.DocumentoCroquis.setValue('');
+	  this.refs.ArchivoCroquis.setValue('');
+	},
+  componentDidMount: function() 
   { 
     this.refs.Fecha.setDate(new Date());
   },
   cancel: function(e)
-  {
+  {this.refs.lkpTipoConstruccion.getValue();
     console.log( 'cancel');
   },
   ok:function(e)
   {
-    console.log( this.DataSource() );
-        $.ajax(
-        {url: "/Cliente_TAKEN", 
-        type: "POST", 
-         data: JSON.stringify( this.DataSource() ),
-         success: console.log('hecho'),
-         contentType:"application/json; charset=utf-8", dataType:"json"}
+    var regex = /[?&]([^=#]+)=([^&#]*)/g,
+       url = window.location.href, params = {}, match;
+       while(match = regex.exec(url)) {params[match[1]] = match[2]; }
+    var data = this.DataCustomerOrder();
+        data.id = params.id;
+   $.ajax(
+      {url: "/Cliente_TAKEN", 
+       type: "POST", 
+       data: JSON.stringify( data ),
+       //success: console.log('hecho'),
+       contentType:"application/json; charset=utf-8", dataType:"json"}
         );
-    console.log( 'ok');
+    history.back();
   },
   DataSource:function()
   {
@@ -241,7 +241,7 @@ var App = React.createClass({
 			'TipoProspecto': this.refs.lkpTipoProspecto.getValue(),          
 			'FaseProyecto': this.refs.lkpFaseProyecto.getValue(),			
 			'Vendedor': this.refs.lkpVendedor.getValue(),
-		    'Notas': this.refs.Notas.getValue() 
+		  'Notas': this.refs.Notas.getValue() 
 			//,	
 			//"CroquisVentas" : this.state.products,
 			//"PlantasElevaciones" : this.state.plantas
@@ -250,66 +250,56 @@ var App = React.createClass({
   //Falta ShipVia-- ShipCost
   },
 render() {
-    return (
-		
-			
-		<div>    	
-			
-			<AppBar title ='Registro de Cliente' />
-			
-			<Tabs> 
+  return (
+	<div>    
+	  <AppBar title ='Registro de Cliente' />
+		  <Tabs> 
 				<Tab label="Generales" > 
 					<div className="row">
 						<div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
 							<div className="box">
 								<TextField 
-						
 									hintText = '' 
 									floatingLabelText = "Folio"
 									multiLine = {false}                           
 									ref = 'FolioID'/>
 							</div>
 						</div>
-						
 						<div className="col-xs-4">
 							<div className="box">
 							  <DateData
-								hintText = 'Fecha' 
-								floatingLabelText = "Fecha"
-								mode = 'portrait' 
-								ref = 'Fecha'/>
+								  hintText = 'Fecha' 
+								  floatingLabelText = "Fecha"
+								  mode = 'portrait' 
+								  ref = 'Fecha'/>
 							</div>
 						</div>
+          </div>
+			      <div className="Title">
+				      <h3>Cliente</h3>
+				    </div>
+          <div className="row">				 			  
+             <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
+                <div className="box">
+                  <label >Cliente</label>            
+        					<LkpCliente
+        						table = 'Customer'
+        						keyfield ='id'
+        						field = 'Nombre'
+                    ref = 'lkpCliente' />
+                  </div>
+                </div> 
+					   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
+                <div className="box">
+                  <Address 
+                    hintText = 'Introduzca la dirección de la obra'
+                    floatingLabelText = "Dirección de la Obra"
+                    multiLine = {false}
+                    ref = 'DireccionObra'/>
                 </div>
-				
-			<div className="Title">
-				  <h3>Cliente</h3>
-				 </div>
-
-                 <div className="row">				 			  
-                  <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
-                    <div className="box">
-                         <label >Cliente</label>            
-						 <lkpCliente
-							table = 'Customer'
-							keyfield ='id'
-							field = 'Nombre'/>
-                    </div>
-                   </div> 
-
-					<div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
-                    <div className="box">
-                     <Address 
-                         hintText = 'Introduzca la dirección de la obra'
-                         floatingLabelText = "Dirección de la Obra"
-                         multiLine = {false}
-                         ref = 'DireccionObra'/>
-                    </div>
-                   </div> 
-				  
-				   
-                 </div>				 
-				  <div className="row">				 			  
+              </div> 
+				    </div>				 
+				    <div className="row">				 			  
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
                      <Phone 
@@ -340,10 +330,11 @@ render() {
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
 					<label >Arquitecto</label>
-                     <lkpArquitecto
+                     <LkpArquitecto
 							table = 'Architects'
 							keyfield ='id'
-							field = 'Nombre'/>
+							field = 'Nombre'
+              ref = 'lkpArquitecto'/>
                     </div>
                    </div>                 
                  </div>
@@ -413,20 +404,22 @@ render() {
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
 					<label >Tipo de Construcción</label>
-						<lkpTipoConstruccion
+						<LkpTipoConstruccion
 							table = 'TypeConstruction'
 							keyfield ='id'
-							field = 'Nombre'/>
+							field = 'Nombre'
+              ref = 'lkpTipoConstruccion' />
                     </div>
                   </div>
 
 				<div className="col-xs-6">
                     <div className="box">				
                     <label >Tipo de Proyecto</label>
-                    <lkpTipoProyecto
+                    <LkpTipoProyecto
 							table = 'TypeProject'
 							keyfield ='id'
-							field = 'Nombre'/>
+							field = 'Nombre'
+              ref = 'lkpTipoProyecto'/>
                     </div>
                   </div>				  
                  </div>
@@ -435,20 +428,22 @@ render() {
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
                     <label >Tipo de Prospecto</label>
-						<lkpTipoProspecto
+						<LkpTipoProspecto
 							table = 'TypeProspectus'
 							keyfield ='id'
-							field = 'Nombre'/>
+							field = 'Nombre'
+              ref = 'lkpTipoProspecto'/>
                     </div>
                   </div>
 				  
 				  <div className="col-xs-6">
                     <div className="box">
                        <label >Fase del Proyecto</label>
-						<lkpFaseProyecto
+						<LkpFaseProyecto
 							table = 'Phase'
 							keyfield ='id'
-							field = 'Nombre'/>
+							field = 'Nombre'
+              ref = 'lkpFaseProyecto'/>
                    </div>
                   </div>				  
                  </div>
@@ -457,10 +452,11 @@ render() {
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
 						 <label >Vendedor</label>
-							<lkpVendedor
+							<LkpVendedor
 								table = 'Seller'
 								keyfield ='id'
-								field = 'Nombre'/>
+								field = 'Nombre'
+                ref = 'lkpVendedor'/>
                     </div>
                   </div>			  
 				  <div className="col-xs-6">
@@ -512,23 +508,7 @@ render() {
                     <GridPlantasElevaciones plantas ={this.state.plantas} /> 
 				</Tab>
 			</Tabs>
-			
-          
-			
-		    
-			 
-				 
-				
-                 
-
-                  
-					
-					
-
-                                     
-            
-				
-         <OkCancel secondary = {true} ok = {this.ok} cancel = {this.cancel} ref = 'OkCancel'/>
+        <OkCancel secondary = {true} ok = {this.ok} cancel = {this.cancel} ref = 'OkCancel'/>
     </div>
 	
     )

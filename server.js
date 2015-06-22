@@ -2,12 +2,9 @@
 var Hapi = require("hapi");
 var Path = require('path');
 var server = new Hapi.Server();
-var usernames = [];
-var numUsers = 0;
 var _ = require('lodash');
 var fs=require("fs"); 
 var R = require('ramda');
-
 var config = require(__dirname + "/config.js");
 var r = require('rethinkdb');
 var plugins = [ { register: require('./routes/routes.js') } ];
@@ -23,7 +20,7 @@ sysData.InitCarga(); //Inicializamos la cargar de archivos csv
 var PathDefault = '/dist/src';
 var i = 0;
 var socketServer;
-server.connection({ host: '192.168.1.111', port: 8000  },
+server.connection({ host: 'localhost', port: 8000  },
                   { cors: true }, 
                   { connections: { routes: { files: {relativeTo: Path.join(__dirname, PathDefault)} } } }
                  );
@@ -88,17 +85,18 @@ var sendTask = function(event)
   var NamesActor = {};
   if(dataCommon.existsElement(sysData.Actor_Role(), 'actor', event.who ) === true){ NamesActor = [ event.who] ;}
   else{ NamesActor = SysCommon.ActorByRole(event.who); }
-
-  var emitTask = {'event':event.event ,
-                  'in':event['in'], 
-                  'task': event.action + '_' + event.event,
-                  'use': event.use,
-                  'what':event.what, 
-                  'how':event.how,
-                  'out':event.out,
-                  'actorSend': NamesActor,
-                  'TimeCreate' : new Date()
-                };
+  var emitTask = 
+  {  
+      'event':event.event ,
+      'in':event['in'], 
+      'task': event.action + '_' + event.event,
+      'use': event.use,
+      'what':event.what, 
+      'how':event.how,
+      'out':event.out,
+      'actorSend': NamesActor,
+      'TimeCreate' : new Date()
+  };
   r.connect(config.rethinkdb)
    .then(function(conn)
     { r.table('IssuedTask')

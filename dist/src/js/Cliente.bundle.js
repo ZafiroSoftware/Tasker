@@ -74,16 +74,15 @@
 	var Table = FixedDataTable.Table;
 	var SearchEntity = __webpack_require__(320);
 
-	var lkpCliente = __webpack_require__(320);
-	var lkpVendedor = __webpack_require__(320);
-	var lkpArquitecto = __webpack_require__(320);
-	var lkpTipoConstruccion = __webpack_require__(320);
-	var lkpFaseProyecto = __webpack_require__(320);
-	var lkpTipoProspecto = __webpack_require__(320);
-	var lkpTipoProyecto = __webpack_require__(320);
+	var LkpCliente = __webpack_require__(320);
+	var LkpVendedor = __webpack_require__(320);
+	var LkpArquitecto = __webpack_require__(320);
+	var LkpTipoConstruccion = __webpack_require__(320);
+	var LkpFaseProyecto = __webpack_require__(320);
+	var LkpTipoProspecto = __webpack_require__(320);
+	var LkpTipoProyecto = __webpack_require__(320);
 
 	var Column = FixedDataTable.Column;
-
 	var FlexBox = __webpack_require__(325);
 
 	var GridCroquisVentas = React.createClass(
@@ -199,7 +198,7 @@
 	}
 
 	var App = React.createClass({displayName: "App",
-	   getInitialState: function()
+	  getInitialState: function()
 	  {
 	    return {products : [], plantas :[], sidebarWidth: 330}
 	  },
@@ -211,60 +210,61 @@
 	  {
 	    return { muiTheme: ThemeManager.getCurrentTheme() };
 	  },
-	  
 	   AddPlantasElevaciones: function()
-	  { var PlantaElevacion = [{  "Documento": this.refs.DocumentoPlantasElevaciones.getValue(),  "Archivo": this.refs.ArchivoPlantasElevaciones.getValue()
-	                  }];
+	  { var PlantaElevacion = 
+	            [{  "Documento": this.refs.DocumentoPlantasElevaciones.getValue(),  
+	                "Archivo": this.refs.ArchivoPlantasElevaciones.getValue()
+	             }];
 	    this.state.plantas.push(PlantaElevacion[0]);
 	    this.setState();
-	   
 	    this.CleanPlantasElevaciones();
 	  },
 	  CleanPlantasElevaciones:function()
 	  {
-	       this.refs.DocumentoPlantasElevaciones.setValue('');
-		   this.refs.ArchivoPlantasElevaciones.setValue('');
-		    },
-	   componentDidMount: function() 
-	   
+	   this.refs.DocumentoPlantasElevaciones.setValue('');
+		 this.refs.ArchivoPlantasElevaciones.setValue('');
+		},
+	  componentDidMount: function() 
 	  { 
-	    this.refs.Fecha.setDate(new Date());
+	   this.refs.Fecha.setDate(new Date());
 	  },
-	  
-	   
 	  AddCroquis: function()
-	  { var Croquis = [{  "Documento": this.refs.DocumentoCroquis.getValue(),  "Archivo": this.refs.ArchivoCroquis.getValue()
-	                  }];
+	  { var Croquis =
+	        [{  "Documento": this.refs.DocumentoCroquis.getValue(),  
+	            "Archivo": this.refs.ArchivoCroquis.getValue()
+	        }];
 	    this.state.products.push(Croquis[0]);
 	    this.setState();
-	   
 	    this.CleanCroquis();
 	  },
 	  CleanCroquis:function()
 	  {
-	       this.refs.DocumentoCroquis.setValue('');
-		   this.refs.ArchivoCroquis.setValue('');
-		    },
-	   componentDidMount: function() 
-	   
+	    this.refs.DocumentoCroquis.setValue('');
+		  this.refs.ArchivoCroquis.setValue('');
+		},
+	  componentDidMount: function() 
 	  { 
 	    this.refs.Fecha.setDate(new Date());
 	  },
 	  cancel: function(e)
-	  {
+	  {this.refs.lkpTipoConstruccion.getValue();
 	    console.log( 'cancel');
 	  },
 	  ok:function(e)
 	  {
-	    console.log( this.DataSource() );
-	        $.ajax(
-	        {url: "/Cliente_TAKEN", 
-	        type: "POST", 
-	         data: JSON.stringify( this.DataSource() ),
-	         success: console.log('hecho'),
-	         contentType:"application/json; charset=utf-8", dataType:"json"}
+	    var regex = /[?&]([^=#]+)=([^&#]*)/g,
+	       url = window.location.href, params = {}, match;
+	       while(match = regex.exec(url)) {params[match[1]] = match[2]; }
+	    var data = this.DataCustomerOrder();
+	        data.id = params.id;
+	   $.ajax(
+	      {url: "/Cliente_TAKEN", 
+	       type: "POST", 
+	       data: JSON.stringify( data ),
+	       //success: console.log('hecho'),
+	       contentType:"application/json; charset=utf-8", dataType:"json"}
 	        );
-	    console.log( 'ok');
+	    history.back();
 	  },
 	  DataSource:function()
 	  {
@@ -287,7 +287,7 @@
 				'TipoProspecto': this.refs.lkpTipoProspecto.getValue(),          
 				'FaseProyecto': this.refs.lkpFaseProyecto.getValue(),			
 				'Vendedor': this.refs.lkpVendedor.getValue(),
-			    'Notas': this.refs.Notas.getValue() 
+			  'Notas': this.refs.Notas.getValue() 
 				//,	
 				//"CroquisVentas" : this.state.products,
 				//"PlantasElevaciones" : this.state.plantas
@@ -296,66 +296,56 @@
 	  //Falta ShipVia-- ShipCost
 	  },
 	render:function() {
-	    return (
-			
-				
-			React.createElement("div", null, 	
-				
-				React.createElement(AppBar, {title: "Registro de Cliente"}), 
-				
-				React.createElement(Tabs, null, 
+	  return (
+		React.createElement("div", null, 
+		  React.createElement(AppBar, {title: "Registro de Cliente"}), 
+			  React.createElement(Tabs, null, 
 					React.createElement(Tab, {label: "Generales"}, 
 						React.createElement("div", {className: "row"}, 
 							React.createElement("div", {className: "col-xs-12 col-sm-8 col-md-6 col-lg-4"}, 
 								React.createElement("div", {className: "box"}, 
 									React.createElement(TextField, {
-							
 										hintText: "", 
 										floatingLabelText: "Folio", 
 										multiLine: false, 
 										ref: "FolioID"})
 								)
 							), 
-							
 							React.createElement("div", {className: "col-xs-4"}, 
 								React.createElement("div", {className: "box"}, 
 								  React.createElement(DateData, {
-									hintText: "Fecha", 
-									floatingLabelText: "Fecha", 
-									mode: "portrait", 
-									ref: "Fecha"})
+									  hintText: "Fecha", 
+									  floatingLabelText: "Fecha", 
+									  mode: "portrait", 
+									  ref: "Fecha"})
 								)
 							)
+	          ), 
+				      React.createElement("div", {className: "Title"}, 
+					      React.createElement("h3", null, "Cliente")
+					    ), 
+	          React.createElement("div", {className: "row"}, 				 			  
+	             React.createElement("div", {className: "col-xs-12 col-sm-8 col-md-6 col-lg-4"}, 
+	                React.createElement("div", {className: "box"}, 
+	                  React.createElement("label", null, "Cliente"), 
+	        					React.createElement(LkpCliente, {
+	        						table: "Customer", 
+	        						keyfield: "id", 
+	        						field: "Nombre", 
+	                    ref: "lkpCliente"})
+	                  )
 	                ), 
-					
-				React.createElement("div", {className: "Title"}, 
-					  React.createElement("h3", null, "Cliente")
-					 ), 
-
-	                 React.createElement("div", {className: "row"}, 				 			  
-	                  React.createElement("div", {className: "col-xs-12 col-sm-8 col-md-6 col-lg-4"}, 
-	                    React.createElement("div", {className: "box"}, 
-	                         React.createElement("label", null, "Cliente"), 
-							 React.createElement("lkpCliente", {
-								table: "Customer", 
-								keyfield: "id", 
-								field: "Nombre"})
-	                    )
-	                   ), 
-
-						React.createElement("div", {className: "col-xs-12 col-sm-8 col-md-6 col-lg-4"}, 
-	                    React.createElement("div", {className: "box"}, 
-	                     React.createElement(Address, {
-	                         hintText: "Introduzca la dirección de la obra", 
-	                         floatingLabelText: "Dirección de la Obra", 
-	                         multiLine: false, 
-	                         ref: "DireccionObra"})
-	                    )
-	                   )
-					  
-					   
-	                 ), 				 
-					  React.createElement("div", {className: "row"}, 				 			  
+						   React.createElement("div", {className: "col-xs-12 col-sm-8 col-md-6 col-lg-4"}, 
+	                React.createElement("div", {className: "box"}, 
+	                  React.createElement(Address, {
+	                    hintText: "Introduzca la dirección de la obra", 
+	                    floatingLabelText: "Dirección de la Obra", 
+	                    multiLine: false, 
+	                    ref: "DireccionObra"})
+	                )
+	              )
+					    ), 				 
+					    React.createElement("div", {className: "row"}, 				 			  
 	                  React.createElement("div", {className: "col-xs-12 col-sm-8 col-md-6 col-lg-4"}, 
 	                    React.createElement("div", {className: "box"}, 
 	                     React.createElement(Phone, {
@@ -386,10 +376,11 @@
 	                  React.createElement("div", {className: "col-xs-12 col-sm-8 col-md-6 col-lg-4"}, 
 	                    React.createElement("div", {className: "box"}, 
 						React.createElement("label", null, "Arquitecto"), 
-	                     React.createElement("lkpArquitecto", {
+	                     React.createElement(LkpArquitecto, {
 								table: "Architects", 
 								keyfield: "id", 
-								field: "Nombre"})
+								field: "Nombre", 
+	              ref: "lkpArquitecto"})
 	                    )
 	                   )
 	                 ), 
@@ -459,20 +450,22 @@
 	                  React.createElement("div", {className: "col-xs-12 col-sm-8 col-md-6 col-lg-4"}, 
 	                    React.createElement("div", {className: "box"}, 
 						React.createElement("label", null, "Tipo de Construcción"), 
-							React.createElement("lkpTipoConstruccion", {
+							React.createElement(LkpTipoConstruccion, {
 								table: "TypeConstruction", 
 								keyfield: "id", 
-								field: "Nombre"})
+								field: "Nombre", 
+	              ref: "lkpTipoConstruccion"})
 	                    )
 	                  ), 
 
 					React.createElement("div", {className: "col-xs-6"}, 
 	                    React.createElement("div", {className: "box"}, 				
 	                    React.createElement("label", null, "Tipo de Proyecto"), 
-	                    React.createElement("lkpTipoProyecto", {
+	                    React.createElement(LkpTipoProyecto, {
 								table: "TypeProject", 
 								keyfield: "id", 
-								field: "Nombre"})
+								field: "Nombre", 
+	              ref: "lkpTipoProyecto"})
 	                    )
 	                  )				  
 	                 ), 
@@ -481,20 +474,22 @@
 	                  React.createElement("div", {className: "col-xs-12 col-sm-8 col-md-6 col-lg-4"}, 
 	                    React.createElement("div", {className: "box"}, 
 	                    React.createElement("label", null, "Tipo de Prospecto"), 
-							React.createElement("lkpTipoProspecto", {
+							React.createElement(LkpTipoProspecto, {
 								table: "TypeProspectus", 
 								keyfield: "id", 
-								field: "Nombre"})
+								field: "Nombre", 
+	              ref: "lkpTipoProspecto"})
 	                    )
 	                  ), 
 					  
 					  React.createElement("div", {className: "col-xs-6"}, 
 	                    React.createElement("div", {className: "box"}, 
 	                       React.createElement("label", null, "Fase del Proyecto"), 
-							React.createElement("lkpFaseProyecto", {
+							React.createElement(LkpFaseProyecto, {
 								table: "Phase", 
 								keyfield: "id", 
-								field: "Nombre"})
+								field: "Nombre", 
+	              ref: "lkpFaseProyecto"})
 	                   )
 	                  )				  
 	                 ), 
@@ -503,10 +498,11 @@
 	                  React.createElement("div", {className: "col-xs-12 col-sm-8 col-md-6 col-lg-4"}, 
 	                    React.createElement("div", {className: "box"}, 
 							 React.createElement("label", null, "Vendedor"), 
-								React.createElement("lkpVendedor", {
+								React.createElement(LkpVendedor, {
 									table: "Seller", 
 									keyfield: "id", 
-									field: "Nombre"})
+									field: "Nombre", 
+	                ref: "lkpVendedor"})
 	                    )
 	                  ), 			  
 					  React.createElement("div", {className: "col-xs-6"}, 
@@ -558,23 +554,7 @@
 	                    React.createElement(GridPlantasElevaciones, {plantas: this.state.plantas})
 					)
 				), 
-				
-	          
-				
-			    
-				 
-					 
-					
-	                 
-
-	                  
-						
-						
-
-	                                     
-	            
-					
-	         React.createElement(OkCancel, {secondary: true, ok: this.ok, cancel: this.cancel, ref: "OkCancel"})
+	        React.createElement(OkCancel, {secondary: true, ok: this.ok, cancel: this.cancel, ref: "OkCancel"})
 	    )
 		
 	    )
@@ -39416,40 +39396,36 @@
 	var Select = __webpack_require__(321);
 
 	var SearchEntity = React.createClass({displayName: "SearchEntity",
-	  getInitialState:function()
+	  getInitialPrpops:function()
 	  {
-	      return { ValueItem:undefined }
-
+	    return ({autoload:true});
 	  },
-	 /* setValue:function(value)
-	  {
-	    //this.refs.Address.setValue(value);
-	  },*/
 	  getValue:function()
-	  {
-	     return this.refs.SearchEntity.state.value;
+	  { 
+	    return this.refs.SearchEntity.state.value;
 	  },
-	  onChange: function(event){ },
 	  searchData:function(input,callback)
 	  { //input = input.toLowerCase();
 	    //setTimeout(function() {
 	    //  callback(null, rtn);
 	    //}, 500);
+	  if(input !== '' ) 
+	   {
 	    Search
 	     .findByName( input , this.props.table, this.props.keyfield, this.props.field )
 	     .done(function(customers)
 	      { callback(null,{ options:customers, complete: false }) ; } )
+	    }
 	  },
 	  render: function() {
+	      var $__0=    this.props,other=(function(source, exclusion) {var rest = {};var hasOwn = Object.prototype.hasOwnProperty;if (source == null) {throw new TypeError();}for (var key in source) {if (hasOwn.call(source, key) && !hasOwn.call(exclusion, key)) {rest[key] = source[key];}}return rest;})($__0,{});
 	    return (
 	      React.createElement("div", null, 
 	        React.createElement("label", null, this.props.label), 
-	          React.createElement(Select, {asyncOptions: this.searchData, 
+	          React.createElement(Select, React.__spread({},  other, 
+	                  {asyncOptions: this.searchData, 
 	                  autoload: true, 
-	                  className: "remote-example", 
-	                  onChange: this.onChange, 
-	                  value: this.props.value, 
-	                  ref: "SearchEntity"})
+	                  ref: "SearchEntity"}))
 	      )
 	    );
 	  }

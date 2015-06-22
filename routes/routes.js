@@ -2,6 +2,9 @@ var dataCommon = require('../common/dataCommon.js');
 var SysCommon = require('../common/SysCommon.js');
 var PathDefault = '/dist/src';
 var path = require("path");
+var fs = require("fs");
+var filename = "./dist/src/Login.html";
+var sysData = require('../common/LoadCsv.js');
 //var formidable = require("formidable");
 
 function LoadFiles2(req,reply)
@@ -48,10 +51,15 @@ function MulterImpl(config) {
 
 
 var users = {
-    oscar: {
-        id: 'oscar',
-        password: '1232',
-        name: 'oscargarcia'
+    JuanHdzL: {
+        id: 'JuanHdzL',
+        password: '123',
+        name: 'JuanHdzL'
+    },
+    RocioTamezJ:{
+        id: 'RocioTamezJ',
+        password: '123',
+        name: 'RocioTamezJ'
     }
 };
 
@@ -65,100 +73,71 @@ var home = function (request, reply) {
 };
 
 var login = function (request, reply) {
-
-    if (request.auth.isAuthenticated) {
-        return reply.redirect('/');
+  
+  var buf = fs.readFileSync(filename, "utf8")
+  if(request.auth.isAuthenticated) 
+  {
+    return reply.redirect('/tasks/' + request.payload.username + '?format=App');
+    //return reply.redirect('/');
+  }
+    
+  var message = '';
+  var account = null;
+  if (request.method === 'post')
+  {
+    if (!request.payload.username || !request.payload.password) 
+    {
+      message = 'Usuario o password desconocido.';
     }
-
-    var message = '';
-    var account = null;
-    if (request.method === 'post') {
-
-        if (!request.payload.username ||
-            !request.payload.password) {
-
-            message = 'Missing username or password';
-        }
-        else {
-            account = users[request.payload.username];
-            if (!account ||
-                account.password !== request.payload.password) {
-
-                message = 'Invalid username or password';
-            }
-        }
+    else 
+    { 
+    account = SysCommon.SearchActor(request.payload.username);// users[request.payload.username];
+    //console.log(account[0].pass);
+      if (!account || account[0].pass != request.payload.password) 
+      { message = 'Usuario o password invalido';
+      }
     }
+  }
 
-    if (request.method === 'get' ||
-        message) {
-
-        return reply('<html><head><title>Login page</title></head><body>'
-            + (message ? '<h3>' + message + '</h3><br/>' : '')
-            + '<form method="post" action="/login">'
-            + 'Username: <input type="text" name="username"><br>'
-            + 'Password: <input type="password" name="password"><br/>'
-            + '<input type="submit" value="Login"></form></body></html>');
+    if (request.method === 'get' || message) 
+    { return reply(buf);
+      //return reply.file(__dirname + PathDefault + '/customerOrder.html');
     }
 
     request.auth.session.set(account);
-    return reply.redirect('/');
+    return reply.redirect('/tasks/' + request.payload.username + '?format=App');
+    //return reply.redirect('/');
 };
 
 var logout = function (request, reply) {
-
     request.auth.session.clear();
     return reply.redirect('/');
 };
 
+
 exports.register = function(server, options, next) {
+  server.register(require('hapi-auth-cookie'), function (err)
+  { server.auth.strategy('session', 'cookie', 
+    { password: 'secret',
+      cookie: 'sid-example',
+      redirectTo: '/login',
+       isSecure: false
+     });
+  });
 
-    /*server.register(require('hapi-auth-cookie'), function (err)
-    { server.auth.strategy('session', 'cookie', 
-      {
-        password: 'secret',
-        cookie: 'sid-example',
-        redirectTo: '/login',
-        isSecure: false
-      });
-    });
-
-server.route([
-    {
-        method: 'GET',
-        path: '/',
-        config: {
-            handler: home,
-            auth: 'session'
-        }
-    },
-    {
-        method: ['GET', 'POST'],
-        path: '/login',
-        config: {
-            handler: login,
-            auth: {
-                mode: 'try',
-                strategy: 'session'
-            },
-            plugins: {
-                'hapi-auth-cookie': {
-                    redirectTo: false
-                }
-            }
-        }
-    },
-    {
-        method: 'GET',
-        path: '/logout',
-        config: {
-            handler: logout,
-            auth: 'session'
-        }
-    }
-]);*/
+server.route({  method: 'GET', 
+                path: '/', 
+                config: { handler: home, auth: 'session' } });
+server.route({  method: ['GET', 'POST'],
+                path: '/login', 
+                config: { handler: login, auth: { mode: 'try',strategy: 'session' },
+                plugins: { 'hapi-auth-cookie': { redirectTo: false } } } } );
+server.route({  method: 'GET', 
+                path: '/logout', 
+                config: { handler: logout, auth: 'session' } });
 
 //server.route({ method: 'POST', path: '/loadFiles',handler: function(req,reply) {new MulterImpl({}).init(); return reply({ status: 'ok' });}    } );
-server.route({ method: 'POST', path: '/loadFiles',handler: function(request, reply){   return reply({ status: 'ok' }); }  } );
+server.route({ method: 'POST', path: '/loadFiles',handler: function(request, reply){  return reply({ status: 'ok' }); }  } );
    //server.route(
    // { method: 'GET', path: '/login/{actor?}', handler: function(request,reply)
    //   { 
@@ -167,14 +146,37 @@ server.route({ method: 'POST', path: '/loadFiles',handler: function(request, rep
    //      else{   reply('El actor no existe');}  } 
    // }
   //);
+/*server.views({
+    relativeTo: __dirname,
+    path: './dist',
+    helpersPath: './dist/src/js',
+    engines: {
+        html: require('handlebars')
+    },
+    compileOptions: {
+          pretty: true
+    },
+    isCached: false
+});*/
 
-   //server.route({ method: 'GET', path: '/events/{actor?}', config: { handler: dataCommon.Events,  auth: 'session' } } ); 
-   server.route({ method: 'GET', path: '/events/{actor?}', config: { handler: dataCommon.Events } } ); 
-   server.route({ method: 'GET', path: '/tasks/{actor?}',  config: { handler: dataCommon.Tasks  } } );
-   server.route({ method: 'GET', path: '/tasks/{param*}',handler: { directory:  { path: path.join(__dirname, '../') + PathDefault , listing: false, index: true }   } });
-   server.route({ method: 'GET', path: '/events/{param*}',handler: { directory:  { path: path.join(__dirname, '../') + PathDefault , listing: false, index: true }   } });
+
+   server.route({ method: 'GET', path: '/events/{actor?}',
+                  config: { handler: dataCommon.Events } } ); 
+
+   server.route({ method: 'GET', path: '/tasks/{actor?}',  
+                  config: { handler: dataCommon.Tasks } } );
+   //config: { handler: dataCommon.Tasks ,  auth: 'session' } } );
+
+   server.route({ method: 'GET', path: '/tasks/{param*}',
+                  handler: { directory:  { path: path.join(__dirname, '../') + PathDefault , listing: false, index: true }   } });
+  
+   server.route({ method: 'GET', path: '/events/{param*}',
+                  handler: { directory:  { path: path.join(__dirname, '../') + PathDefault , listing: false, index: true }   } });
+  
    server.route({ method: 'GET', path: '/{param*}',handler: { directory:  { path: path.join(__dirname, '../') + PathDefault , listing: false, index: true }   } });
+
    server.route({ method: 'POST', path: '/CustomerOrder_TAKEN',handler: dataCommon.CustomerOrder_TAKEN }  );
+   
    server.route({ method: 'POST', path: '/getTask',handler: dataCommon.getTask} );
 
    server.route({ method: 'GET', path: '/getSearch',handler: dataCommon.getSearch } );
