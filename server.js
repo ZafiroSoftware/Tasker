@@ -20,7 +20,7 @@ sysData.InitCarga(); //Inicializamos la cargar de archivos csv
 var PathDefault = '/dist/src';
 var i = 0;
 var socketServer;
-server.connection({ host: 'localhost', port: 8000  },
+server.connection({ host: '192.168.1.102', port: 8000  },
                   { cors: true }, 
                   { connections: { routes: { files: {relativeTo: Path.join(__dirname, PathDefault)} } } }
                  );
@@ -78,8 +78,14 @@ socketio.on("connection", ioHandler);
 //---------------------------------------------------------------------------------------------------------------------------------
 //funciones para manipulacion de tareas roles y actores
 //---------------------------------------------------------------------------------------------------------------------------------
-//Busca el evento pasando como argunmento la entidad y la entrada
+//Envia las tareas d
+var sendTasks = function(events)
+{
+  _.map(events,sendTask);
+}
+module.exports.sendTasks = sendTasks;
 
+//Busca el evento pasando como argunmento la entidad y la entrada
 var sendTask = function(event)
 { var actorName;
   var NamesActor = {};
@@ -97,6 +103,7 @@ var sendTask = function(event)
       'actorSend': NamesActor,
       'TimeCreate' : new Date()
   };
+
   r.connect(config.rethinkdb)
    .then(function(conn)
     { r.table('IssuedTask')
@@ -111,11 +118,14 @@ var sendTask = function(event)
           .run(conn)
           .then(function(result){ return result.toArray();})
           .then(function(result)
-          {  _.map(result,function(s){ socketio.sockets.connected[s.socketid].emit('sendtask', emitTask) }); })  
+          { _.map(result,function(s){ socketio.sockets.connected[s.socketid].emit('sendtask', emitTask) }); })  
         });
        });
      })
 }
+
+
+
 
 var sendTaskIO = function(task,socket)
 {_.map(SysCommon.SearchEvent(task.event, task.out )

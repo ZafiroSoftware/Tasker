@@ -4,6 +4,7 @@ var R = require('ramda');
 var config = require('../config.js');
 var r = require('rethinkdb');
 var sysData = require('./LoadCsv.js');
+var server = require('../server.js');
 var sysCommon = require('./sysCommon.js');
 var PathDefault = 'dist/src';
 var path = require("path")
@@ -186,10 +187,14 @@ module.exports.InsertData = function(table,source,result)
     });
 }
 
-module.exports.searchTask = function(event)
+var searchTask = function(event)
 {
-  _.map(_.filter( SearchEvent(event.event, event.out) ), sendTask);
-  // _.map(_.filter( EventTaskRole,{ 'event': event.event, 'in': event.out }), sendTask);
+  return searchEvent(event);
+};
+
+var searchEvent = function(event)
+{
+  return _.filter( sysData.EventTaskRole(),{ 'event': event.event, 'in': event.out });
 };
 
 module.exports.CustomerOrder_TAKEN = function (request, reply) 
@@ -212,7 +217,7 @@ module.exports.CustomerOrder_TAKEN = function (request, reply)
      .filter({id:request.payload.id})
      .run(conn)
      .then(function(result){ return result.toArray();})
-     .then(function(result){ searchTask({'event':result[0].event, 'out': result[0].out}); }) 
+     .then(function(result){ return searchTask({'event':result[0].event, 'out': result[0].out}); }) 
   })
 
   r.connect(config.rethinkdb)
@@ -227,6 +232,7 @@ module.exports.CustomerOrder_TAKEN = function (request, reply)
 module.exports.Prospeccion_TAKEN = function (request, reply) 
 {
   var fecha = new Date();
+  var sendTaskNew = [];
  //Actualiza la hora en que se termino la tarea
  r.connect(config.rethinkdb)
   .then(function(conn)
@@ -244,7 +250,7 @@ module.exports.Prospeccion_TAKEN = function (request, reply)
      .filter({id:request.payload.id})
      .run(conn)
      .then(function(result){ return result.toArray();})
-     .then(function(result){ searchTask({'event':result[0].event, 'out': result[0].out}); }) 
+     .then(function(result){ sendTaskNew = searchTask({'event':result[0].event, 'out': result[0].out}); })
   })
 
   r.connect(config.rethinkdb)
@@ -269,14 +275,16 @@ module.exports.Cliente_TAKEN = function (request, reply)
      .run(conn)   
   })
 
- r.connect(config.rethinkdb)
+  r.connect(config.rethinkdb)
   .then(function(conn)
   {
     r.table('IssuedTask')
      .filter({id:request.payload.id})
      .run(conn)
      .then(function(result){ return result.toArray();})
-     .then(function(result){ searchTask({'event':result[0].event, 'out': result[0].out}); }) 
+     .then(function(result){ 
+          server.sendTasks( searchTask({'event':result[0].event, 'out': result[0].out}) );
+    }) 
   })
 
   r.connect(config.rethinkdb)
@@ -317,4 +325,5 @@ module.exports.getSearch = function(request, reply)
    });
 }
 
+module.exports.searchTask = searchTask;
 module.exports.existsElement = existsElement;

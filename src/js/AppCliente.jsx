@@ -39,45 +39,7 @@ var LkpTipoProyecto = require("./Components/SearchEntity.jsx");
 var Column = FixedDataTable.Column;
 var FlexBox = require('flexboxgrid');
 
-var GridCroquisVentas = React.createClass(
-  {  render: function()
-      {
-      var datasource;   
-      datasource = this.props.products;
-      return(
-            <Table 
-              rowHeight={25}
-              rowGetter={function(rowIndex) {return datasource[rowIndex];  }}
-              rowsCount={datasource.length}
-              width={1120}
-              height={220}
-              headerHeight={30}>
-              <Column label="Documento" width={400} dataKey={'Documento'} />
-              <Column label="Archivo" width={400} dataKey={'Archivo'} />
-            </Table>
-            );
-      }
-  });
-  
-  var GridPlantasElevaciones = React.createClass(
-  {  render: function()
-      {
-      var datasource;   
-      datasource = this.props.plantas;
-      return(
-            <Table 
-              rowHeight={25}
-              rowGetter={function(rowIndex) {return datasource[rowIndex];  }}
-              rowsCount={datasource.length}
-              width={1120}
-              height={220}
-              headerHeight={30}>
-              <Column label="Documento" width={400} dataKey={'Documento'} />
-              <Column label="Archivo" width={400} dataKey={'Archivo'} />
-            </Table>
-            );
-      }
-  });
+
   
 //Manejo de importación de archivo
 var  DropzoneComponent = require('react-dropzone-component/lib/dropzone');
@@ -209,7 +171,7 @@ var App = React.createClass({
     var regex = /[?&]([^=#]+)=([^&#]*)/g,
        url = window.location.href, params = {}, match;
        while(match = regex.exec(url)) {params[match[1]] = match[2]; }
-    var data = this.DataCustomerOrder();
+    var data = this.DataSource();
         data.id = params.id;
    $.ajax(
       {url: "/Cliente_TAKEN", 
@@ -432,7 +394,7 @@ render() {
 							table = 'TypeProspectus'
 							keyfield ='id'
 							field = 'Nombre'
-              ref = 'lkpTipoProspecto'/>
+							ref = 'lkpTipoProspecto'/>
                     </div>
                   </div>
 				  
@@ -473,39 +435,26 @@ render() {
 				</Tab> 
 				
 				<Tab label="Croquis de Ventas" > 
-					  <TextField 
-                        hintText = 'Introduzca el documento' 
-                        floatingLabelText = "Documento"
-                        multiLine = {false}
-                        ref = 'DocumentoCroquis' />
+				
+					 <label >Introduzca el documento</label>   
 						
                      <DropzoneComponent config={componentConfig} 
                        eventHandlers={eventHandlers} 
                        djsConfig={djsConfig} />,
                     
-                    <Botton label="Agregar"  
-                        secondary={true}
-                        onClick={this.AddCroquis} />
-                    <GridCroquisVentas products ={this.state.products} />
+                                       
 				</Tab> 
 				
 				<Tab label="Plantas y Elevaciones de la Obra" > 
 				
-					 <TextField 
-                        hintText = 'Introduzca el documento' 
-                        floatingLabelText = "Documento"
-                        multiLine = {false}
-                        ref = 'DocumentoPlantasElevaciones' />
-                    <StringData 
-                        hintText = 'Introduzca el archivo' 
-                        floatingLabelText = "Archivo"
-                        multiLine = {false}
-                        ref = 'ArchivoPlantasElevaciones' />
+					<label >Introduzca el documento</label>    
+					 						
+                     <DropzoneComponent config={componentConfig} 
+                       eventHandlers={eventHandlers} 
+                       djsConfig={djsConfig} />,
                     
-                    <Botton label="Agregar"  
-                        secondary={true}
-                        onClick={this.AddPlantasElevaciones} />
-                    <GridPlantasElevaciones plantas ={this.state.plantas} /> 
+                    
+                    
 				</Tab>
 			</Tabs>
         <OkCancel secondary = {true} ok = {this.ok} cancel = {this.cancel} ref = 'OkCancel'/>

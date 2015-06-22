@@ -26,6 +26,10 @@ var Column = FixedDataTable.Column;
 
 var FlexBox = require('flexboxgrid');
 
+var LkpVendedor = require("./Components/SearchEntity.jsx");
+var LkpFaseProyecto = require("./Components/SearchEntity.jsx");
+var LkpTipoProspecto = require("./Components/SearchEntity.jsx");
+
 var GridPreguntas = React.createClass(
   {  render: function()
       {
@@ -61,12 +65,12 @@ var App = React.createClass({
   },
   CleanCustomer: function()
   {
-    this.refs.Vendedor.setValue('');
+    this.refs.lkpVendedor.setValue('');
     this.refs.Prospecto.setValue('');
     this.refs.Correo.setValue('');
     this.refs.Telefono.setValue('');
-    this.refs.TipoProspecto.setValue('');
-	this.refs.FaseProyecto.setValue('');
+    this.refs.lkpTipoProspecto.setValue('');
+	this.refs.lkpFaseProyecto.setValue('');
   },
    
   AddPregunta: function()
@@ -96,7 +100,7 @@ var App = React.createClass({
     var regex = /[?&]([^=#]+)=([^&#]*)/g,
        url = window.location.href, params = {}, match;
        while(match = regex.exec(url)) {params[match[1]] = match[2]; }
-    var data = this.DataCustomerOrder();
+    var data = this.DataProspeccion();
         data.id = params.id;
   $.ajax(
         {url: "/Prospeccion_TAKEN", 
@@ -111,13 +115,13 @@ var App = React.createClass({
   {
     var data =  
         { 'Folio': this.refs.FolioID.getValue(),		  
-          'Vendedor': this.refs.Vendedor.getValue(),
+          'Vendedor': this.refs.lkpVendedor.getValue(),
 		  'Fecha': this.refs.DateData.getDate(),
           'Prospecto': this.refs.Prospecto.getValue(),
          'Correo': this.refs.Correo.getValue(),
 		 'Telefono': this.refs.Telefono.getValue(),
-		 'TipoProspecto': this.refs.TipoProspecto.getValue(),          
-		  'FaseProyecto': this.refs.FaseProyecto.getValue(),
+		 'TipoProspecto': this.refs.lkpTipoProspecto.getValue(),          
+		  'FaseProyecto': this.refs.lkpFaseProyecto.getValue(),
           "Preguntas" : this.state.products
        };
    return data; 
@@ -155,11 +159,12 @@ var App = React.createClass({
                 <div className="row">	
                  <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                   <div className="box">
-                    <Name 
-                        hintText = 'Vendedor' 
-                        floatingLabelText = "Vendedor"
-                        multiLine = {false} 
-                        ref = 'Vendedor'/>
+                    <label >Vendedor</label>
+							<LkpVendedor
+								table = 'Seller'
+								keyfield ='id'
+								field = 'Nombre'
+								ref = 'lkpVendedor'/>
                   </div>
                 </div>
                   <div className="col-xs-6">
@@ -197,21 +202,23 @@ var App = React.createClass({
                  <div className="row">  
                   <div className="col-xs-12 col-sm-8 col-md-6 col-lg-4">
                     <div className="box">
-                    <TipoProspecto 
-                        hintText = 'Introduzca el tipo de prospecto' 
-                        floatingLabelText = "Tipo de Prospecto"
-                        multiLine = {false}
-                        ref = 'TipoProspecto' />
+                    <label >Tipo de Prospecto</label>
+						<LkpTipoProspecto
+							table = 'TypeProspectus'
+							keyfield ='id'
+							field = 'Nombre'
+							ref = 'lkpTipoProspecto'/>
                     </div>
                   </div>
 				  
 				  <div className="col-xs-6">
                     <div className="box">
-                      <FaseProyecto 
-                         hintText = 'Introduzca la fase del proyecto' 
-                         floatingLabelText = "Fase del proyecto"
-                         multiLine = {false}
-                         ref = 'FaseProyecto' />
+                       <label >Fase del Proyecto</label>
+						<LkpFaseProyecto
+							table = 'Phase'
+							keyfield ='id'
+							field = 'Nombre'
+							ref = 'lkpFaseProyecto'/>
                    </div>
                   </div>
 				  
