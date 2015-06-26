@@ -1,9 +1,7 @@
-event,in,action,what,out,who,use,how
-Cliente,NEW,Take,Dar de alta cliente,END,sales-rep,http://192.168.1.102:8000/Cliente.html,https://facebook.github.io/react/
-Cliente,END,End,Finaliza la alta del cliente,END,sales-rep,http://192.168.1.102:8000/Cliente.html,https://facebook.github.io/react/
-Prospeccion,NEW,Take,Dar de alta prospecto,TAKEN,sales-rep,http://192.168.1.102:8000/Prospeccion.html,https://ui8.net/product/material-ui-kit
-,,,,,,,
-,,,,,,,
-,,,,,,,
-,,,,,,,
-,,,,,,,
+event,in,action,what,entity,out,who,use,how,req
+Prospecto,NEW,Registar,Registrar el prospecto,Prospecto,REGISTRADO,vendor,http://192.168.1.121:8000/task.html,https://facebook.github.io/react/,"Phone, Screen"
+Prospecto,REGISTRADO,Interesar,Interesar al prospecto,Prospecto,INTERESADO,vendor,http://192.168.1.121:8000/task.html,https://facebook.github.io/react/,Screen
+Prospecto,INTERESADO,Calificar,Calificar al prospecto,Prospecto,CALIFICADO,vendor,http://192.168.1.121:8000/task.html,https://facebook.github.io/react/,Screen
+Prospecto,CALIFICADO,Conseguir,Conseguir planos,Prospecto,PLANEADO,vendor,http://192.168.1.121:8000/task.html,https://facebook.github.io/react/,
+Prospecto,PLANEADO,Crear,Crear cliente,Prospecto.Cotizacion,NEW,vendor,http://192.168.1.121:8000/task.html,https://facebook.github.io/react/,
+Prospecto.Cotizacion,NEW,Registar,Dar de alta al cliente,Prospecto.Cotizacion,END,vendor,http://192.168.1.121:8000/task.html,,

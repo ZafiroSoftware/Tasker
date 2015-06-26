@@ -5,50 +5,6 @@ var path = require("path");
 var fs = require("fs");
 var filename = "./dist/src/Login.html";
 var sysData = require('../common/LoadCsv.js');
-//var formidable = require("formidable");
-
-function LoadFiles2(req,reply)
-{
-  var incoming = new formidable.IncomingForm();
-  incoming.uploadDir = 'uploads';
-  incoming.on('file',function(field,file)
-   { if(!file.size){return; }
-     reply({ status: 'ok' });
-   }
-  ).on('end');
-  incoming.parse(req);
-}
-
-function LoadFiles(req,reply)
-{
-  console.log(req.payload.file);
-  reply({ status: 'ok' });
-}
-
-
-function MulterImpl(config) {
-    var defaultDest = '../uploads/';
-
-    this.init = function () {
-        var multer = require('multer');
-        var uploadDir = !config.uplodaDir ? defaultDest : config.uplodaDir;
-
-        var options = {
-            dest: uploadDir,
-            rename: function (fieldname, filename) {
-                return filename + Date.now();
-            },
-            onFileUploadStart: function (file) {
-                console.log(file.originalname + ' is starting ...');
-            },
-            onFileUploadComplete: function (file) {
-                console.log(file.fieldname + ' uploaded to  ' + file.path);
-            }
-        };
-        return multer(file);
-    }
-}
-
 
 var users = {
     JuanHdzL: {
@@ -64,20 +20,14 @@ var users = {
 };
 
 var home = function (request, reply) {
-
-    reply('<html><head><title>Login page</title></head><body><h3>Welcome '
-      + request.auth.credentials.name
-      + '!</h3><br/><form method="get" action="/logout">'
-      + '<input type="submit" value="Logout">'
-      + '</form></body></html>');
+    return reply.redirect('/tasks/' + request.auth.credentials.username + '?format=App');
 };
 
 var login = function (request, reply) {
-  
   var buf = fs.readFileSync(filename, "utf8")
   if(request.auth.isAuthenticated) 
   {
-    return reply.redirect('/tasks/' + request.payload.username + '?format=App');
+    return reply.redirect('/tasks/' + request.auth.credentials.username + '?format=App');
     //return reply.redirect('/');
   }
     
@@ -91,9 +41,14 @@ var login = function (request, reply) {
     }
     else 
     { 
-    account = SysCommon.SearchActor(request.payload.username);// users[request.payload.username];
+    tmp = SysCommon.SearchActor(request.payload.username);// users[request.payload.username];
     //console.log(account[0].pass);
-      if (!account || account[0].pass != request.payload.password) 
+    if(tmp)
+    {
+      account = {username:tmp[0].actor,password:tmp[0].pass};  
+    }
+
+      if (!account || account.password != request.payload.password) 
       { message = 'Usuario o password invalido';
       }
     }
@@ -114,6 +69,7 @@ var logout = function (request, reply) {
     return reply.redirect('/');
 };
 
+var multiparty = require('multiparty')
 
 exports.register = function(server, options, next) {
   server.register(require('hapi-auth-cookie'), function (err)
@@ -137,7 +93,35 @@ server.route({  method: 'GET',
                 config: { handler: logout, auth: 'session' } });
 
 //server.route({ method: 'POST', path: '/loadFiles',handler: function(req,reply) {new MulterImpl({}).init(); return reply({ status: 'ok' });}    } );
-server.route({ method: 'POST', path: '/loadFiles',handler: function(request, reply){  return reply({ status: 'ok' }); }  } );
+server.route({
+    method: 'POST',
+    path: '/loadFiles',
+    config: {
+        payload: {
+            maxBytes: 209715200,
+            output: 'stream',
+            parse: false
+        },
+         handler: function(request, reply) {
+                var multipary = require('multiparty');
+                var form = new multiparty.Form();
+                form.parse(request.payload, function(err, fields, files) {
+                  //var name = files.file.fieldname;
+                  //console.log(typeof(files.file[0].fieldName));
+                  //console.log(files.file);
+                  //var path = __dirname + "/uploads/" + name;
+                  // var file = fs.createWriteStream(path);
+                   //console.log(err);
+                   //console.log(fields);
+                   //console.log(files);
+                  return reply(JSON.stringify(files));
+                });
+                //return reply({ status: 'ok' });
+            }
+    }
+});
+
+                  //handler: function(request, reply){  return reply({ status: 'ok' }); }  } );
    //server.route(
    // { method: 'GET', path: '/login/{actor?}', handler: function(request,reply)
    //   { 
@@ -160,11 +144,13 @@ server.route({ method: 'POST', path: '/loadFiles',handler: function(request, rep
 });*/
 
 
+  //--------------------------------------------------------------------------------
+  //FUNCIONALIDAD PARA TASKER
    server.route({ method: 'GET', path: '/events/{actor?}',
-                  config: { handler: dataCommon.Events } } ); 
+                  config: { handler: dataCommon.Events ,auth: 'session' } } ); 
 
    server.route({ method: 'GET', path: '/tasks/{actor?}',  
-                  config: { handler: dataCommon.Tasks } } );
+                  config: { handler: dataCommon.Tasks ,auth: 'session' } } );
    //config: { handler: dataCommon.Tasks ,  auth: 'session' } } );
 
    server.route({ method: 'GET', path: '/tasks/{param*}',
@@ -174,22 +160,15 @@ server.route({ method: 'POST', path: '/loadFiles',handler: function(request, rep
                   handler: { directory:  { path: path.join(__dirname, '../') + PathDefault , listing: false, index: true }   } });
   
    server.route({ method: 'GET', path: '/{param*}',handler: { directory:  { path: path.join(__dirname, '../') + PathDefault , listing: false, index: true }   } });
-
-   server.route({ method: 'POST', path: '/CustomerOrder_TAKEN',handler: dataCommon.CustomerOrder_TAKEN }  );
    
+  server.route({ method: 'POST', path: '/TaskFinish',handler: dataCommon.TaskFinish } );
+
+   //--------------------------------------------------------------------------------
    server.route({ method: 'POST', path: '/getTask',handler: dataCommon.getTask} );
-
    server.route({ method: 'GET', path: '/getSearch',handler: dataCommon.getSearch } );
-   server.route({ method: 'GET', path: '/getCustomerSearch',handler: dataCommon.getCustomerSearch } );
-   server.route({ method: 'GET', path: '/getCustomer',handler: dataCommon.getCustomer } );
-   server.route({ method: 'GET', path: '/getCustomerByID',handler: dataCommon.getCustomerByID } );
-   server.route({ method: 'GET', path: '/getProducts',handler: dataCommon.getProducts } );
-   server.route({ method: 'GET', path: '/Take_CustomerOrder',  handler: function(request, reply) {  reply.file(__dirname + PathDefault + '/customerOrder.html');  }});
-
-   server.route({ method: 'POST', path: '/Prospeccion_TAKEN',handler: dataCommon.Prospeccion_TAKEN }  );
-   server.route({ method: 'POST', path: '/Cliente_TAKEN',handler: dataCommon.Cliente_TAKEN }  );
-    // Callback, completes the registration process
-    next();
+   server.route({ method: 'GET', path: '/getPreguntas',handler: dataCommon.getPreguntas} );
+    
+   next();
 }
 // Required for all plugins
 // If this were a npm module, one could do this:

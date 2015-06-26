@@ -27,6 +27,23 @@ productsService = (function ()
                };
 }());
 
+ClientesService = (function ()
+{
+        var baseURL = "";
+        return {
+         findById: function(id) { return $.ajax({ url: baseURL + "/getClienteByID" , data: {id:id} }); },
+                 findByName: function(searchKey) {return $.ajax({url: baseURL + "/" + "getClienteByID", data: {id: searchKey}}); }
+               };
+}());
+
+ProspectosService = (function ()
+{
+        var baseURL = "";
+        return {
+         findById: function(id) { return $.ajax({ url: baseURL + "/getProspectoByID" , data: {id:id} }); },
+                 findByName: function(searchKey) {return $.ajax({url: baseURL + "/" + "getProspectoByID", data: {id: searchKey}}); }
+               };
+}());
 
 customerService = (function ()
 {
@@ -43,9 +60,14 @@ Search = (function ()
 {
         var baseURL = "";
         return {
-              //findById: function(id) { return $.ajax(url + "/getCustomerByID/" + id);},
-             findById: function(id) { return $.ajax({ url: baseURL + "/getCustomerByID" , data: {id:id} }); },
-
-                 findByName: function(searchKey,table,key,field) { return $.ajax({url: baseURL + "/" + "getSearch", data: { search: searchKey, table:table , key:key, field:field } }); }
+                findById: function(id,table,key,field) { return $.ajax({ url: baseURL + "/getSearch" , data: { id: id, table:table , key:key, field:field } }); },
+                findByName: function(searchKey,table,key,field) { return $.ajax({url: baseURL + "/" + "getSearch", data: { search: searchKey, table:table , key:key, field:field } }); }
                };
+}());
+
+getPreguntas = (function ()
+{ var baseURL = "";
+  return {findById: function(id) { return $.ajax( { url: baseURL + "/getCustomerByID" , data: {id:id} }); },
+          findByName: function() { return $.ajax( { url: baseURL + "/" + "getPreguntas" }); }
+         };
 }());

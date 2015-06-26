@@ -20,9 +20,7 @@ var MyTextField = React.createClass({
   },
   render: function() {
     return (
-      <div className="text-field-mui">
         <AppBar title= {this.props.title}  />
-      </div>
     );
   }
 });

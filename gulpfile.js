@@ -19,70 +19,28 @@ var path = {
   ENTRY_POINT: './src/js/App.js'
 };
 
-gulp.task('webpackCliente', function() 
-{
-  return gulp.src('src/js/AppCliente.jsx')
-    .pipe(webpack({
-      entry: './src/js/AppCliente.jsx',
-      output: {
-          path: __dirname + path.DEST_SRC + '/js',
-          filename: 'Cliente.bundle.js' },
-       module: {
-          loaders: [
-            { test: /\.jsx$/, loader: 'jsx-loader?harmony' },
-            { test: /\.css$/, loader: 'style-loader!css-loader' },
-          ]
-        },
-         resolve: {
-            extensions: ['', '.js','.jsx', '.htm']
-        }
-    }))
-    .pipe(gulp.dest(path.DEST_SRC + '/js'));
-});
-
-gulp.task('webpackProspeccion', function() 
-{
-  return gulp.src('src/js/AppProspeccion.jsx')
-    .pipe(webpack({
-      entry: './src/js/AppProspeccion.jsx',
-      output: {
-          path: __dirname + path.DEST_SRC + '/js',
-          filename: 'Prospeccion.bundle.js' },
-       module: {
-          loaders: [
-            { test: /\.jsx$/, loader: 'jsx-loader?harmony' },
-            { test: /\.css$/, loader: 'style-loader!css-loader' },
-          ]
-        },
-         resolve: {
-            extensions: ['', '.js','.jsx', '.htm']
-        }
-    }))
-    .pipe(gulp.dest(path.DEST_SRC + '/js'));
-});
-
-gulp.task('webpackCustomerOrder', function() 
-{
-  return gulp.src('src/js/AppCustomerOrder.jsx')
-    .pipe(webpack({
-      entry: './src/js/AppCustomerOrder.jsx',
-      output: {
-          path: __dirname + path.DEST_SRC + '/js',
-          filename: 'CustomerOrder.bundle.js' },
-       module: {
-          loaders: [
-            { test: /\.jsx$/, loader: 'jsx-loader?harmony' },
-            { test: /\.css$/, loader: 'style-loader!css-loader' },
-          ]
-        },
-         resolve: {
-            extensions: ['', '.js','.jsx', '.htm']
-        }
-    }))
-    .pipe(gulp.dest(path.DEST_SRC + '/js'));
-});
- 
 gulp.task('webpackTask', function() 
+{
+  return gulp.src('./src/js/AppTask.jsx')
+    .pipe(webpack({
+      transform : [ 'reactify' ],
+      output: {
+          path: __dirname + path.DEST_SRC + '/js',
+          filename: 'task.bundle.js' },
+       module: {
+          loaders: [
+            { test: /\.jsx$/, loader: 'jsx-loader?harmony' ,exclude: /node_modules/},
+          ]
+        },
+         resolve: {
+            extensions: ['','.js','.jsx']
+        }
+    }))
+    .pipe(uglify())
+    .pipe(gulp.dest(path.DEST_SRC + '/js'));
+});
+
+gulp.task('webpackTasks', function() 
 {
   return gulp.src('./src/js/tasks.jsx')
     .pipe(webpack({
@@ -103,6 +61,26 @@ gulp.task('webpackTask', function()
     .pipe(gulp.dest(path.DEST_SRC + '/js'));
 });
 
+gulp.task('webpackProspeccion', function() 
+{
+  return gulp.src('src/js/AppProspeccion.jsx')
+    .pipe(webpack({
+      transform : [ 'reactify' ],
+      output: {
+          filename: 'Prospeccion.bundle.js' },
+       module: {
+          loaders: [
+            { test: /\.jsx$/, loader: 'jsx-loader?harmony' ,exclude: /node_modules/},
+          ]
+        },
+         resolve: {
+            extensions: ['', '.js','.jsx']
+        }
+    }))
+    .pipe(uglify())
+    .pipe(gulp.dest(path.DEST_SRC + '/js'));
+});
+
 gulp.task('copy', function(){
   gulp.src(path.HTML)
     .pipe(gulp.dest(path.DEST_SRC));
@@ -110,10 +88,9 @@ gulp.task('copy', function(){
 
 gulp.task('watch', function() {
   gulp.watch(path.HTML, ['copy']);
-  gulp.watch('src/js/AppCustomerOrder.jsx', ['webpackCustomerOrder']);
-  gulp.watch('src/js/tasks.jsx', ['webpackTask']);
-  gulp.watch('src/js/AppProspeccion.jsx', ['webpackProspeccion']);
-  gulp.watch('src/js/AppCliente.jsx', ['webpackCliente']);
+  gulp.watch('src/js/tasks.jsx', ['webpackTasks']);
+
+  gulp.watch('src/js/AppTask.jsx', ['webpackTask']);
 });
 
 gulp.task('replaceHTML', function(){
@@ -125,5 +102,6 @@ gulp.task('replaceHTML', function(){
 });
 
 gulp.task('production', ['replaceHTML', 'build']);
-
-gulp.task('default', ['watch','webpackCustomerOrder','webpackTask','webpackProspeccion', 'webpackCliente']);
+gulp.task('default', ['watch',
+                      'webpackTasks',
+                      'webpackTask']);

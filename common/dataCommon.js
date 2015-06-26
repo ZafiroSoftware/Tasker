@@ -7,7 +7,34 @@ var sysData = require('./LoadCsv.js');
 var server = require('../server.js');
 var sysCommon = require('./sysCommon.js');
 var PathDefault = 'dist/src';
-var path = require("path")
+var path = require("path");
+
+//En el request enviar el id de la tarea
+var TaskFinish = function(request, reply)
+{ var fecha = new Date();
+    r.connect(config.rethinkdb)
+    .then(function(conn)
+    {
+      r.table('IssuedTask')
+       .get(request.payload.id)
+       .update({TimeFinish: fecha})
+       .run(conn)   
+    });
+
+   r.connect(config.rethinkdb)
+    .then(function(conn)
+    {
+      r.table('IssuedTask')
+       .filter({id:request.payload.id})
+       .run(conn)
+       .then(function(result){ return result.toArray();})
+       .then(function(result){ 
+         if(result[0].out.toLowerCase() !== 'END'){
+            server.sendTasks( searchTask({'event':result[0].entity, 'out': result[0].out}) );
+         }
+        })
+    });
+}
 
 module.exports.Events = function(request, reply)
 {
@@ -53,6 +80,7 @@ module.exports.Tasks = function(request, reply)
                      .or( (user.hasFields('who').not()).and(user("actorSend").contains(request.params.actor)) ) );
              })
              .filter(function(doc){ return doc('task').match("^" + request.query.name) })
+             .orderBy(r.desc('date'))
              .run(conn)
              .then(function(result){ return result.toArray();})
              .then(function(result){ reply(result); }) 
@@ -87,65 +115,6 @@ module.exports.Tasks = function(request, reply)
       }
 };
 
-module.exports.getProducts = function(request, reply)
-{ var name = request.query.name;
-    if(name)
-    { r.connect(config.rethinkdb)
-       .then(function(conn)
-       { r.table('Products')
-          .filter({'ClaveArticulo':name})
-          .run(conn)
-          .then(function(result){ return result.toArray();})
-          .then(function(result){ reply(result); }) 
-        }); 
-    }
-    else
-    { r.connect(config.rethinkdb)
-       .then(function(conn)
-       { r.table('Products')
-          .run(conn)
-          .then(function(result){ return result.toArray();})
-          .then(function(result){ reply(result); }) 
-       }); 
-    };
-  }
-
-module.exports.getCustomer = function(request, reply)
-{
-  var name = request.query.name;
-	 if(name)
-    { r.connect(config.rethinkdb)
-       .then(function(conn)
-       { r.table('Customer')
-          .filter({'Nombre':name})
-          .run(conn)
-          .then(function(result){ return result.toArray();})
-          .then(function(result){ reply(result); }) 
-        }); 
-    }
-    else
-    { r.connect(config.rethinkdb)
-       .then(function(conn)
-       { r.table('Customer')
-          .run(conn)
-          .then(function(result){ return result.toArray();})
-          .then(function(result){ reply(result); }) 
-       }); 
-    };
-}
-
-module.exports.getCustomerByID = function(request, reply)
-{if(request.query.id)
-  {  r.connect(config.rethinkdb)
-       .then(function(conn)
-       { r.table('Customer')
-          .filter({ClienteID:request.query.id})
-          .run(conn)
-          .then(function(result){ return result.toArray();})
-          .then(function(result){ reply(result); }) 
-       });
-  }
-}
 //---------------------------------------------------------------------------------------------------------------------------------
 // Funciones para guardar los datos
 //---------------------------------------------------------------------------------------------------------------------------------
@@ -197,128 +166,42 @@ var searchEvent = function(event)
   return _.filter( sysData.EventTaskRole(),{ 'event': event.event, 'in': event.out });
 };
 
-module.exports.CustomerOrder_TAKEN = function (request, reply) 
-{
-  var fecha = new Date();
- //Actualiza la hora en que se termino la tarea
- r.connect(config.rethinkdb)
-  .then(function(conn)
-  {
-    r.table('IssuedTask')
-     .get(request.payload.id)
-     .update({TimeFinish: fecha})
-     .run(conn)   
-  })
-
- r.connect(config.rethinkdb)
-  .then(function(conn)
-  {
-    r.table('IssuedTask')
-     .filter({id:request.payload.id})
-     .run(conn)
-     .then(function(result){ return result.toArray();})
-     .then(function(result){ return searchTask({'event':result[0].event, 'out': result[0].out}); }) 
-  })
-
-  r.connect(config.rethinkdb)
-  .then(function(conn)
-  {
-    r.table('CustomerOrder')
-     .insert(request.payload)
-     .run(conn)   
-  })
-};
-
-module.exports.Prospeccion_TAKEN = function (request, reply) 
-{
-  var fecha = new Date();
-  var sendTaskNew = [];
- //Actualiza la hora en que se termino la tarea
- r.connect(config.rethinkdb)
-  .then(function(conn)
-  {
-    r.table('IssuedTask')
-     .get(request.payload.id)
-     .update({TimeFinish: fecha})
-     .run(conn)   
-  })
-
- r.connect(config.rethinkdb)
-  .then(function(conn)
-  {
-    r.table('IssuedTask')
-     .filter({id:request.payload.id})
-     .run(conn)
-     .then(function(result){ return result.toArray();})
-     .then(function(result){ sendTaskNew = searchTask({'event':result[0].event, 'out': result[0].out}); })
-  })
-
-  r.connect(config.rethinkdb)
-  .then(function(conn)
-  {
-    r.table('Prospectos')
-     .insert(request.payload)
-     .run(conn)   
-  })
-};
-
-module.exports.Cliente_TAKEN = function (request, reply) 
-{
-  var fecha = new Date();
- //Actualiza la hora en que se termino la tarea
- r.connect(config.rethinkdb)
-  .then(function(conn)
-  {
-    r.table('IssuedTask')
-     .get(request.payload.id)
-     .update({TimeFinish: fecha})
-     .run(conn)   
-  })
-
-  r.connect(config.rethinkdb)
-  .then(function(conn)
-  {
-    r.table('IssuedTask')
-     .filter({id:request.payload.id})
-     .run(conn)
-     .then(function(result){ return result.toArray();})
-     .then(function(result){ 
-          server.sendTasks( searchTask({'event':result[0].event, 'out': result[0].out}) );
-    }) 
-  })
-
-  r.connect(config.rethinkdb)
-  .then(function(conn)
-  {
-    r.table('Clientes')
-     .insert(request.payload)
-     .run(conn)   
-  })
-};
-
-module.exports.getCustomerSearch = function(request, reply)
-{
-  var name = request.query.name;
-  console.log(name);
-  r.connect(config.rethinkdb)
-   .then(function(conn)
-   { r.table('Customer')
-      .filter(  function(f){ return f('Nombre').match(name) } )
-      .pluck('id', 'Nombre')
-      .map({ id: r.row("id"), name: r.row("Nombre") } )
-      .run(conn)
-      .then(function(result){ return result.toArray();})
-      .then(function(result){ return reply(result); }) 
-   });
-}
-
+//var name = request.query.name;
 module.exports.getSearch = function(request, reply)
-{ r.connect(config.rethinkdb)
+{
+  if(request.query.search) 
+  {
+   r.connect(config.rethinkdb)
    .then(function(conn)
    { r.table(request.query.table)
       .filter(  function(f){ return f(request.query.field).match(request.query.search) } )
       .pluck(request.query.key, request.query.field)
       .map({ value: r.row(request.query.key), label: r.row(request.query.field) } )
+      .limit(50)
+      .run(conn)
+      .then(function(result){ return result.toArray();})
+      .then(function(result){ return reply(result); }) 
+   });
+  }
+  if(request.query.id) 
+  {
+   r.connect(config.rethinkdb)
+   .then(function(conn)
+   { r.table(request.query.table)
+      .filter(  function(f){ return f(request.query.key).eq(request.query.id) } )
+      .pluck(request.query.key, request.query.field)
+      .map({ value: r.row(request.query.key), label: r.row(request.query.field) } )
+      .run(conn)
+      .then(function(result){ return result.toArray();})
+      .then(function(result){ return reply(result); }) 
+   });
+  }
+}
+
+module.exports.getPreguntas = function(request, reply)
+{ r.connect(config.rethinkdb)
+   .then(function(conn)
+   { r.table('Preguntas')
       .run(conn)
       .then(function(result){ return result.toArray();})
       .then(function(result){ return reply(result); }) 
@@ -327,3 +210,4 @@ module.exports.getSearch = function(request, reply)
 
 module.exports.searchTask = searchTask;
 module.exports.existsElement = existsElement;
+module.exports.TaskFinish = TaskFinish

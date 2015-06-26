@@ -35,7 +35,6 @@ var DatePickers = React.createClass({
   render: function() 
   {
     return (
-      <div>
        <DatePicker
        		hintText={this.props.hintText}
        		mode={this.props.mode}
@@ -44,7 +43,6 @@ var DatePickers = React.createClass({
   			maxDate={this.state.maxDate}
   			showYearSelector={this.state.showYearSelector}
         ref = 'fecha' />
-      </div>
     );
   }
 });

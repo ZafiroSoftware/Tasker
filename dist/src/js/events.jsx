@@ -6,10 +6,9 @@ var userdefault;
 
 var Header = React.createClass(
 {  RedirectTasks:function()
-    {
-        //window.open('/events/' + userdefault + '?format=App', '_self').close();
-        window.location = '/tasks/' + userdefault + '?format=App';
-    },
+   {
+     window.location = '/tasks/' + userdefault + '?format=App';
+   },
     render: function ()
    { return ( <header className="bar bar-nav">
                <a href="#" className={"icon icon-left-nav pull-left" + (this.props.back==="true"?"":" hidden")}></a>
@@ -32,15 +31,17 @@ var SearchBar = React.createClass(
 });
 
 var TaskListItem = React.createClass(
-{
-    SendTaskEvent:function(){ socket.emit('sendtask', this.props.task);},
-    render: function ()
-    {return (
-            <li className="table-view-cell media" onClick = {this.SendTaskEvent} >
-                    {this.props.task.event} {this.props.task.out}
-            </li>
-            );
-    }
+{ SendTaskEvent:function(){
+    socket.emit('sendtask', {'entity':this.props.task.event,out:this.props.task.out });
+    alert('Se ha enviado la tarea');
+  },
+  render: function ()
+  {return (
+      <li className="table-view-cell media" onClick = {this.SendTaskEvent} >
+          {this.props.task.event} {this.props.task.out}
+      </li>
+      );
+  }
 });
 
 var TaskList = React.createClass(

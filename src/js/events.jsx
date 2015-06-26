@@ -5,11 +5,11 @@ var socket = io.connect();
 var userdefault;
 
 var Header = React.createClass(
-{  RedirectTasks:function()
-    {
-        window.location = '/tasks/' + userdefault + '?format=App';
-    },
-    render: function ()
+{ RedirectTasks:function()
+  {
+    window.location = '/tasks/' + userdefault + '?format=App';
+  },
+  render: function ()
    { return ( <header className="bar bar-nav">
                <a href="#" className={"icon icon-left-nav pull-left" + (this.props.back==="true"?"":" hidden")}></a>
                <h1 className="title">{this.props.text}</h1>
@@ -32,7 +32,8 @@ var SearchBar = React.createClass(
 
 var TaskListItem = React.createClass(
 {
-    SendTaskEvent:function(){ socket.emit('sendtask', this.props.task);},
+    SendTaskEvent:function(){console.log(this.props.task); socket.emit('sendtask', this.props.task);
+                              alert("Se ha enviado la tarea:" + this.props.task.action + '_' + this.props.task.event);},
     render: function ()
     {return (
             <li className="table-view-cell media" onClick = {this.SendTaskEvent} >

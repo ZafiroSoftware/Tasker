@@ -5,7 +5,8 @@ module.exports = {
         authKey: "",
         db: "Tasker"
     },
-    express: {
-        port: 28015
+    hapi: {
+    	host:'192.168.1.121',
+        port: 8000
     }
 }
