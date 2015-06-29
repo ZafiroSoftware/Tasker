@@ -1,15 +1,13 @@
 var React = require('react/addons');
-var TextField = require('material-ui/lib/text-field');
 var AppBar = require("./Components/AppBar.jsx");
-var ThemeManager = require('material-ui/lib/styles/theme-manager')();
-var Botton = require('material-ui/lib/flat-button');
-
 var Address = require("./Components/Address.jsx");
 var Correo = require("./Components/Email.jsx");
 var Prospecto = require("./Components/String.jsx");
 var Phone = require("./Components/Phone.jsx");
 var OkCancel = require("./Components/OkCancel.jsx");
-var LkpVendedor = require("./Components/SearchEntity.jsx");
+var ThemeManager = require('material-ui/lib/styles/theme-manager')();
+var DateData = require("./Components/Date.jsx");
+var Vendedor = require("./Components/String.jsx");
 var idTask;
 
 var App = React.createClass({
@@ -17,77 +15,91 @@ var App = React.createClass({
   {
     return {products : []}
   },
+  childContextTypes: {
+    muiTheme: React.PropTypes.object
+  },
+  getChildContext: function() {
+    return {
+      muiTheme: ThemeManager.getCurrentTheme()
+    };
+  },
   componentDidMount: function() 
-  { 
+  { this.refs.Fecha.setDate(new Date());
     var regex = /[?&]([^=#]+)=([^&#]*)/g,
         url = window.location.href, params = {}, match;
         while(match = regex.exec(url)) {params[match[1]] = match[2]; }
         idTask = params.id;
   },
-  childContextTypes:
+  setVendedor:function()
   {
-    muiTheme: React.PropTypes.object
-  },
-  getChildContext: function() 
-  {
-    return { muiTheme: ThemeManager.getCurrentTheme() };
+     $.ajax({
+      url: "/Prospecto_Registar", 
+      type: "GET", 
+      data: JSON.stringify( data ),
+      contentType:"application/json; charset=utf-8", dataType:"json"}
+    );
   },
   DataProspeccion:function()
   {
     return {
-     'Folio': this.refs.FolioID.getValue(),      
-     'Vendedor': this.refs.lkpVendedor.getValue(),
      'Prospecto': this.refs.Prospecto.getValue(),
+     'Direccion': this.refs.Direccion.getValue(),
+     'Telefono': this.refs.Telefono.getValue(),
      'Correo': this.refs.Correo.getValue(),
-     'Telefono': this.refs.Telefono.getValue()
+     'Fecha': this.refs.DateData.getDate()
     };
-   //return data; 
   },
   EventCancel: function(e)
-  {  console.log(idTask);
+  { 
+    window.location = '/';
   },
   EventOk:function(e)
   {
     var data = this.DataProspeccion();
         data.id = idTask;
     $.ajax({
-      url: "/Prospeccion_TAKEN", 
+      url: "/Prospecto_Registar", 
       type: "POST", 
       data: JSON.stringify( data ),
       contentType:"application/json; charset=utf-8", dataType:"json"}
     );
-    history.back();
+    window.location = '/';
   },
   render() {
     return (
     <div>
       <AppBar title ='Prospección' />
-      <TextField 
-        hintText = '' 
-        floatingLabelText = "Folio"
-        multiLine = {false} 
-        ref = 'FolioID'/>
-      <LkpVendedor
-        table = 'Seller'
-        keyfield ='id'
-        field = 'Nombre'
-        ref = 'lkpVendedor'/>
+      <Vendedor 
+        hintText = 'Vendedor' 
+        floatingLabelText = "Vendedor"
+        multiLine = {true}
+        ref = 'Vendedor'/>
+      <DateData
+       hintText = 'Fecha' 
+       floatingLabelText = "Fecha"
+       mode = 'portrait' 
+       ref = 'Fecha'/>
       <Prospecto 
         hintText = 'Prospecto'
-        loatingLabelText = "Prospecto"
-        multiLine = {false}
+        floatingLabelText = "Prospecto"
+        multiLine = {true}
         ref = 'Prospecto'/>
+      <Address 
+        hintText = 'Introduzca la direcciòn'
+        floatingLabelText = "Direcciòn"
+        multiLine = {true}
+        ref = 'Direccion'/>
       <Phone 
-        hintText = 'Introduzca su teléfono'
+        hintText = 'Introduzca el teléfono'
         floatingLabelText = "Telefono"
-        multiLine = {false}
+        multiLine = {true}
         ref = 'Telefono'/>
       <Correo 
         hintText = 'Introduzca su correo' 
         floatingLabelText = "Correo"
-        multiLine = {false}
+        multiLine = {true}
         ref = 'Correo' />
-      < OkCancel secondary = {true} 
+      <OkCancel secondary = {true} 
         ok = {this.EventOk} 
         cancel = {this.EventCancel} 
         ref = 'OkCancel'/>
@@ -97,5 +109,3 @@ var App = React.createClass({
 })
 
 React.render(<App/>, document.body);
-
-

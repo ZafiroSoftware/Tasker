@@ -44,7 +44,8 @@ module.exports.Events = function(request, reply)
         { return reply('The actor not exists'); }
         if(request.query.format)
         {
-          if (request.query.format === 'App'){ return reply.file( path.join(__dirname, '../') + PathDefault + '/Events.html');}
+          if (request.query.format === 'App' && request.auth.credentials.username === request.params.actor)
+             { return reply.file( path.join(__dirname, '../') + PathDefault + '/Events.html');}
           else {return reply('The page was not found').code(404);}
         }
         else if(request.query.name)
@@ -66,7 +67,8 @@ module.exports.Tasks = function(request, reply)
         { return reply('The actor not exists'); }
         if(request.query.format)
         {
-          if (request.query.format === 'App'){return  reply.file( path.join(__dirname, '../') + PathDefault + '/Tasks.html'); }
+          if (request.query.format === 'App' && request.auth.credentials.username === request.params.actor)
+               {return  reply.file( path.join(__dirname, '../') + PathDefault + '/Tasks.html'); }
           else {return reply('The page was not found').code(404);}
         }
         else if(request.query.name)
@@ -80,10 +82,10 @@ module.exports.Tasks = function(request, reply)
                      .or( (user.hasFields('who').not()).and(user("actorSend").contains(request.params.actor)) ) );
              })
              .filter(function(doc){ return doc('task').match("^" + request.query.name) })
-             .orderBy(r.desc('date'))
+             .orderBy(r.desc('TimeCreate'))
              .run(conn)
              .then(function(result){ return result.toArray();})
-             .then(function(result){ reply(result); }) 
+             .then(function(result){ return reply(result); }) 
            }); 
         }
         else 
@@ -97,9 +99,10 @@ module.exports.Tasks = function(request, reply)
                     (   (user.hasFields('who')).and(user("who").eq(request.params.actor)) )
                      .or( (user.hasFields('who').not()).and(user("actorSend").contains(request.params.actor)) ) );
              })
+            .orderBy(r.desc('TimeCreate'))
             .run(conn)
             .then(function(result){ return result.toArray();})
-            .then(function(result){ reply(result); }) 
+            .then(function(result){ return reply(result); }) 
           }); 
         }
       }
@@ -207,6 +210,18 @@ module.exports.getPreguntas = function(request, reply)
       .then(function(result){ return reply(result); }) 
    });
 }
+
+module.exports.Prospecto_Registar = function (request, reply) 
+{ TaskFinish(request, reply);
+
+  r.connect(config.rethinkdb)
+  .then(function(conn)
+  {
+    r.table('Prospectos')
+     .insert(request.payload)
+     .run(conn)   
+  })
+};
 
 module.exports.searchTask = searchTask;
 module.exports.existsElement = existsElement;

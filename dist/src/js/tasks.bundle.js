@@ -83,8 +83,7 @@
 	//var styleNew = { color: 'green', backgroundColor: 'red', fontSize: 50 }; 
 
 	var TaskListItem = React.createClass(
-	{displayName: "TaskListItem",
-	    ondbClickEvent:function()
+	{displayName: "TaskListItem", ondbClickEvent:function()
 	    {
 	      if(this.props.task.TimeFinish === undefined)          //Comprobamos si la tarea esta finalizada.
 	      { this.props.task.who = userdefault;
@@ -100,7 +99,7 @@
 	    {return ( 
 	             React.createElement("li", {className: "table-view-cell media", 
 	                style: this.props.task.TimeFinish !== undefined ? styleFinish:this.props.task.TimeTaken!== undefined?styleRun:styleNew, 
-	                onDoubleClick: this.ondbClickEvent}, 
+	                onClick: this.ondbClickEvent}, 
 	                      this.props.task.task, 
 	                React.createElement("p", null, this.props.task.what), 
 	                React.createElement("p", null, "ID:", this.props.task.id), 
@@ -148,7 +147,7 @@
 	   },
 	    getTask: function(emited_task)
 	    {
-	        this.state.tasks.push(emited_task);
+	        this.state.tasks.unshift(emited_task);
 	        this.setState();
 	    },
 	    deletetask: function(emited_task)

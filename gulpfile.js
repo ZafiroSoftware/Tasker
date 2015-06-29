@@ -77,7 +77,6 @@ gulp.task('webpackProspeccion', function()
             extensions: ['', '.js','.jsx']
         }
     }))
-    .pipe(uglify())
     .pipe(gulp.dest(path.DEST_SRC + '/js'));
 });
 
@@ -89,8 +88,8 @@ gulp.task('copy', function(){
 gulp.task('watch', function() {
   gulp.watch(path.HTML, ['copy']);
   gulp.watch('src/js/tasks.jsx', ['webpackTasks']);
-
   gulp.watch('src/js/AppTask.jsx', ['webpackTask']);
+  gulp.watch('src/js/AppProspeccion.jsx', ['webpackProspeccion']);
 });
 
 gulp.task('replaceHTML', function(){
@@ -104,4 +103,5 @@ gulp.task('replaceHTML', function(){
 gulp.task('production', ['replaceHTML', 'build']);
 gulp.task('default', ['watch',
                       'webpackTasks',
-                      'webpackTask']);
+                      'webpackTask',
+                      'webpackProspeccion']);

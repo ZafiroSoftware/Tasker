@@ -1,4 +1,5 @@
-var React = require('react/addons');
+
+var React = require('react');
 var AppBar = require("./Components/AppBar.jsx");
 var idTask;
 

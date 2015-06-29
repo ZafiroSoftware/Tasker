@@ -167,7 +167,8 @@ server.route({
    server.route({ method: 'POST', path: '/getTask',handler: dataCommon.getTask} );
    server.route({ method: 'GET', path: '/getSearch',handler: dataCommon.getSearch } );
    server.route({ method: 'GET', path: '/getPreguntas',handler: dataCommon.getPreguntas} );
-    
+   server.route({ method: 'POST', path: '/Prospecto_Registar',handler: dataCommon.Prospecto_Registar} );
+
    next();
 }
 // Required for all plugins

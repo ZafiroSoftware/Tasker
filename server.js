@@ -1,20 +1,23 @@
 "use strict"
 var Hapi = require("hapi");
 var Path = require('path');
-var server = new Hapi.Server();
 var _ = require('lodash');
-var fs=require("fs"); 
 var R = require('ramda');
+var fs = require("fs"); 
 var config = require(__dirname + "/config.js");
 var r = require('rethinkdb');
+var server = new Hapi.Server();
 var plugins = [ { register: require('./routes/routes.js') } ];
 var sysData = require('./common/LoadCsv.js');
 var SysCommon = require('./common/SysCommon.js');
 var dataCommon = require('./common/dataCommon.js');
+
 //---------------------------------------------------------------------------------------------------------------------------------
 //Inicializacion del server
 //---------------------------------------------------------------------------------------------------------------------------------           
 
+var isProduction = process.env.NODE_ENV === 'production';
+var port = isProduction ? 8080 : 3000;
 sysData.InitCarga(); //Inicializamos la cargar de archivos csv
 
 var PathDefault = '/dist/src';
@@ -180,7 +183,8 @@ var SessionOff = function()
 //--------------------------------------------------------------------------------------------------------------------------------- 
 
 server.register(plugins, function (err) 
-              {if (err) { throw err; }
-               server.start(function () 
-                { server.log('info', 'Server running at: ' + server.info.uri); } );
-              });
+  {if (err) { throw err; }
+   server.start(function () 
+    { console.log('Server running at: ' + server.info.uri);
+      server.log('info', 'Server running at: ' + server.info.uri); } );
+  });

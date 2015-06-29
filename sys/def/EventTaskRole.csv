@@ -1,7 +1,19 @@
-event,in,action,what,entity,out,who,use,how,req
-Prospecto,NEW,Registar,Registrar el prospecto,Prospecto,REGISTRADO,vendor,http://192.168.1.121:8000/task.html,https://facebook.github.io/react/,"Phone, Screen"
-Prospecto,REGISTRADO,Interesar,Interesar al prospecto,Prospecto,INTERESADO,vendor,http://192.168.1.121:8000/task.html,https://facebook.github.io/react/,Screen
-Prospecto,INTERESADO,Calificar,Calificar al prospecto,Prospecto,CALIFICADO,vendor,http://192.168.1.121:8000/task.html,https://facebook.github.io/react/,Screen
-Prospecto,CALIFICADO,Conseguir,Conseguir planos,Prospecto,PLANEADO,vendor,http://192.168.1.121:8000/task.html,https://facebook.github.io/react/,
-Prospecto,PLANEADO,Crear,Crear cliente,Prospecto.Cotizacion,NEW,vendor,http://192.168.1.121:8000/task.html,https://facebook.github.io/react/,
-Prospecto.Cotizacion,NEW,Registar,Dar de alta al cliente,Prospecto.Cotizacion,END,vendor,http://192.168.1.121:8000/task.html,,
+event,in,action,what,entity,out,who,how,use,req,props,code
+Prospecto,NEW,Registar,Registrar el prospecto,Prospecto,REGISTRADO,vendedor,,http://192.168.1.121:8000/task.html,"Phone, Screen",,
+Prospecto,REGISTRADO,Interesar,Interesar al prospecto,Prospecto,INTERESADO,vendedor,,http://192.168.1.121:8000/task.html,Screen,,
+Prospecto,INTERESADO,Calificar,Calificar al prospecto,Prospecto,CALIFICADO,vendedor,,http://192.168.1.121:8000/task.html,Screen,,
+Prospecto,CALIFICADO,Conseguir,Conseguir planos,Prospecto,PLANEADO,vendedor,,http://192.168.1.121:8000/task.html,,,
+Prospecto,PLANEADO,Crear,Crear Cotizacion,Prospecto.Cotizacion,NEW,vendedor,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion,NEW,Transcribir,Transcribe los productos deseados,Prospecto.Cotizacion,TRANSCRITO,cotizador,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion,TRANSCRITO,Definir,Definir los materiales requeridos,Prospecto.Cotizacion,DEFINIDO,cotizador,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion,DEFINIDO,Outsorcear,Determinar necesidad de outsourcear,Prospecto.Cotizacion.Proveedor,EXTERNA,cotizador,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion.Proveedor,EXTERNA,Solicitar,Solicitar cotizacion Proveedores,Prospecto.Cotizacion.Proveedor,SOLICITADA,comprador,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion.Proveedor,SOLICITADA,Recibir,Proveedor env¡a Cotizacion,Proveedor.Cotizacion.Proveedor,RECIBIDA,comprador,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion.Proveedor,RECIBIDA,Integrar,Integrar (hacer) Cotizacion cuando todas las enviadas se hayan recibido.,Prospecto.Cotizacion,COTIZADA,comprador,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion,COTIZADA,Entregar V,Imprimir y entregar a vendedora,Prospecto.Cotizacion,ENTREGADA V,comprador,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion,ENTREGADA V,Entregar C,Entregar Cotizacion al prospecto,Prospecto.Cotizacion,ENTREGADA C,vendedor,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion,ENTREGADA C,Explicar,Se revisa y discute la Cotizacion,Prospecto.Cotizacion,EXPLICADA,vendedor,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion,EXPLICADA,Interesar,Interesar al prospecto,Prospecto.Cotizacion,INTERESADA,vendedor,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion,INTERESADA,Facturar A,Facturar Anticipo,Prospecto.Cotizacion,ANTICIPO FACTURADO,contador,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion,ANTICIPO FACTURADO,Cobrar A,Cobrar Anticipo,Prospecto.Cotizacion,COBRADO,contador,,http://192.168.1.121:8000/task.html,,,
+Prospecto.Cotizacion,COBRADO,,,Prospecto.Cotizacion,END,vendedor,,http://192.168.1.121:8000/task.html,,,
