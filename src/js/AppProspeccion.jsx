@@ -46,7 +46,7 @@ var App = React.createClass({
      'Direccion': this.refs.Direccion.getValue(),
      'Telefono': this.refs.Telefono.getValue(),
      'Correo': this.refs.Correo.getValue(),
-     'Fecha': this.refs.DateData.getDate()
+     'Fecha': this.refs.Fecha.getDate()
     };
   },
   EventCancel: function(e)
@@ -69,11 +69,6 @@ var App = React.createClass({
     return (
     <div>
       <AppBar title ='Prospección' />
-      <Vendedor 
-        hintText = 'Vendedor' 
-        floatingLabelText = "Vendedor"
-        multiLine = {true}
-        ref = 'Vendedor'/>
       <DateData
        hintText = 'Fecha' 
        floatingLabelText = "Fecha"

@@ -135,6 +135,19 @@ module.exports.getTask = function(request, reply)
     //return reply.redirect()
 };
 
+module.exports.getTaskByID = function(request, reply) 
+{var fecha = new Date();
+     r.connect(config.rethinkdb)
+      .then(function(conn)
+      {
+        r.table('IssuedTask')
+         .get(request.payload.id)
+         .run(conn)   
+         .then(function(result){ return result.toArray();})
+         .then(function(result){ return reply(result); }) 
+      })
+    //return reply.redirect()
+};
 //---------------------------------------------------------------------------------------------------------------------------------           
 //Funciones generales
 //---------------------------------------------------------------------------------------------------------------------------------           
@@ -222,6 +235,56 @@ module.exports.Prospecto_Registar = function (request, reply)
      .run(conn)   
   })
 };
+
+
+module.exports.Prospecto_Interesar = function (request, reply) 
+{
+   TaskFinish(request, reply);
+
+   //console.log(request);
+
+  r.connect(config.rethinkdb)
+  .then(function(conn)
+  {
+    r.table('Prospectos')
+     .filter({id:request.payload.id})
+     .update(request.payload)
+     .run(conn)   
+  })
+};
+
+module.exports.Prospecto_Calificar = function (request, reply) 
+{
+   TaskFinish(request, reply);
+
+   //console.log(request);
+
+  r.connect(config.rethinkdb)
+  .then(function(conn)
+  {
+    r.table('Prospectos')
+     .filter({id:request.payload.id})
+     .update(request.payload)
+     .run(conn)   
+  })
+};
+
+
+module.exports.getProspectoByID = function(request, reply)
+{if(request.query.id)
+  {  r.connect(config.rethinkdb)
+       .then(function(conn)
+       { r.table('Prospectos')
+      .filter({id: request.query.id})
+          //.get({id:request.query.id})
+          .run(conn)
+          .then(function(result){ return result.toArray();})
+          .then(function(result){ return reply(result); }) 
+       });
+  }
+
+
+}
 
 module.exports.searchTask = searchTask;
 module.exports.existsElement = existsElement;

@@ -80,6 +80,45 @@ gulp.task('webpackProspeccion', function()
     .pipe(gulp.dest(path.DEST_SRC + '/js'));
 });
 
+gulp.task('webpackProspeccionInteresar', function() 
+{
+  return gulp.src('src/js/AppProspeccionInteresar.jsx')
+    .pipe(webpack({
+      transform : [ 'reactify' ],
+      output: {
+          filename: 'ProspeccionInteresar.bundle.js' },
+       module: {
+          loaders: [
+            { test: /\.jsx$/, loader: 'jsx-loader?harmony' ,exclude: /node_modules/},
+          ]
+        },
+         resolve: {
+            extensions: ['', '.js','.jsx']
+        }
+    }))
+    .pipe(gulp.dest(path.DEST_SRC + '/js'));
+});
+
+gulp.task('webpackProspeccionCalificar', function() 
+{
+  return gulp.src('src/js/AppProspeccionCalificar.jsx')
+    .pipe(webpack({
+      transform : [ 'reactify' ],
+      output: {
+          filename: 'ProspeccionCalificar.bundle.js' },
+       module: {
+          loaders: [
+            { test: /\.jsx$/, loader: 'jsx-loader?harmony' ,exclude: /node_modules/},
+             { test: /\.css$/, loader: 'style-loader!css-loader' },
+          ]
+        },
+         resolve: {
+            extensions: ['', '.js','.jsx']
+        }
+    }))
+    .pipe(gulp.dest(path.DEST_SRC + '/js'));
+});
+
 gulp.task('copy', function(){
   gulp.src(path.HTML)
     .pipe(gulp.dest(path.DEST_SRC));
@@ -90,6 +129,8 @@ gulp.task('watch', function() {
   gulp.watch('src/js/tasks.jsx', ['webpackTasks']);
   gulp.watch('src/js/AppTask.jsx', ['webpackTask']);
   gulp.watch('src/js/AppProspeccion.jsx', ['webpackProspeccion']);
+  gulp.watch('src/js/AppProspeccionInteresar.jsx', ['webpackProspeccionInteresar']);
+  gulp.watch('src/js/AppProspeccionCalificar.jsx', ['webpackProspeccionCalificar']);
 });
 
 gulp.task('replaceHTML', function(){
@@ -104,4 +145,6 @@ gulp.task('production', ['replaceHTML', 'build']);
 gulp.task('default', ['watch',
                       'webpackTasks',
                       'webpackTask',
-                      'webpackProspeccion']);
+                      'webpackProspeccion',
+                      'webpackProspeccionInteresar',
+                      'webpackProspeccionCalificar']);

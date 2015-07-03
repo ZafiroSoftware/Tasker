@@ -168,7 +168,10 @@ server.route({
    server.route({ method: 'GET', path: '/getSearch',handler: dataCommon.getSearch } );
    server.route({ method: 'GET', path: '/getPreguntas',handler: dataCommon.getPreguntas} );
    server.route({ method: 'POST', path: '/Prospecto_Registar',handler: dataCommon.Prospecto_Registar} );
-
+   server.route({ method: 'GET', path: '/getTaskByID',handler: dataCommon.getTaskByID} );
+   server.route({ method: 'GET', path: '/getProspectoByID',handler: dataCommon.getProspectoByID } );
+   server.route({ method: 'POST', path: '/Prospecto_Interesar',handler: dataCommon.Prospecto_Interesar }  );
+   server.route({ method: 'POST', path: '/Prospecto_Calificar',handler: dataCommon.Prospecto_Calificar }  );
    next();
 }
 // Required for all plugins

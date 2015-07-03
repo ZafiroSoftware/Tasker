@@ -37,31 +37,29 @@ var styleNew = { color: 'green'};
 //var styleNew = { color: 'green', backgroundColor: 'red', fontSize: 50 }; 
 
 var TaskListItem = React.createClass(
-{
-    ondbClickEvent:function()
+{ ondbClickEvent:function()
     {
-      if(this.props.task.TimeFinish === undefined) //Comprobamos si la tarea esta finalizada
+      if(this.props.task.TimeFinish === undefined)          //Comprobamos si la tarea esta finalizada.
       { this.props.task.who = userdefault;
-        taskservice.getTask(this.props.task, userdefault);      // Indicamos que estamos tomado la tarea
-        socket.emit('deletetask', this.props.task);
-        window.location = this.props.task.use //"/" + this.props.task.task + "?id=" + this.props.task.id;  
+        socket.emit('deletetask', this.props.task);        //Eliminamos las tareas enviadas a otros usuarios. 
+        taskservice.getTask(this.props.task, userdefault); // Indicamos que estamos tomado la tarea.
+        //window.location = this.props.task.use "/" + this.props.task.task + "?id=" + this.props.task.id;  
+        window.location = this.props.task.use + "?id=" + this.props.task.id;  //La direccion y el id de la tarea
       }
     },
-    btnOnClickEvent: function()
-    {
-      window.open(this.props.task.how);
-    },
+    btnOnClickhow: function()
+    { window.open(this.props.task.how); },
     render: function ()
-    {
-        return ( 
+    {return ( 
              <li className="table-view-cell media"
                 style={this.props.task.TimeFinish !== undefined ? styleFinish:this.props.task.TimeTaken!== undefined?styleRun:styleNew}  
-                onDoubleClick = {this.ondbClickEvent}>
-                      {this.props.task.task}
-                <p>{this.props.task.what}</p>
+                >
+                      {this.props.task.what}
                 <p>ID:{this.props.task.id}</p>
-                <button className="btn pull-right" onClick={this.btnOnClickEvent}>how</button>
-
+                <div>
+                <button className="btn btn-primary" onClick={this.ondbClickEvent}>Take</button>
+                <button className="btn pull-right" onClick={this.btnOnClickhow}>how</button>
+                </div>
             </li>
         );
     }
@@ -105,7 +103,7 @@ var App = React.createClass(
    },
     getTask: function(emited_task)
     {
-        this.state.tasks.push(emited_task);
+        this.state.tasks.unshift(emited_task);
         this.setState();
     },
     deletetask: function(emited_task)
@@ -137,3 +135,4 @@ var App = React.createClass(
 });
 
 React.render(<App/>, document.body);
+

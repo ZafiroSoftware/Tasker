@@ -46,7 +46,6 @@ h6 {
   margin-left: 10px;
   color: #08c;
   font-weight: bold;
-  cursor: pointer;
 }
 .switcher span.link:hover {
   text-decoration: underline;

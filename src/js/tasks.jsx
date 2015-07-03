@@ -53,11 +53,13 @@ var TaskListItem = React.createClass(
     {return ( 
              <li className="table-view-cell media"
                 style={this.props.task.TimeFinish !== undefined ? styleFinish:this.props.task.TimeTaken!== undefined?styleRun:styleNew}  
-                onClick = {this.ondbClickEvent}>
-                      {this.props.task.task}
-                <p>{this.props.task.what}</p>
+                >
+                      {this.props.task.what}
                 <p>ID:{this.props.task.id}</p>
+                <div>
+                <button className="btn btn-primary" onClick={this.ondbClickEvent}>Take</button>
                 <button className="btn pull-right" onClick={this.btnOnClickhow}>how</button>
+                </div>
             </li>
         );
     }

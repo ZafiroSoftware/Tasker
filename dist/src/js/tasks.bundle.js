@@ -98,12 +98,14 @@
 	    render: function ()
 	    {return ( 
 	             React.createElement("li", {className: "table-view-cell media", 
-	                style: this.props.task.TimeFinish !== undefined ? styleFinish:this.props.task.TimeTaken!== undefined?styleRun:styleNew, 
-	                onClick: this.ondbClickEvent}, 
-	                      this.props.task.task, 
-	                React.createElement("p", null, this.props.task.what), 
+	                style: this.props.task.TimeFinish !== undefined ? styleFinish:this.props.task.TimeTaken!== undefined?styleRun:styleNew
+	                }, 
+	                      this.props.task.what, 
 	                React.createElement("p", null, "ID:", this.props.task.id), 
+	                React.createElement("div", null, 
+	                React.createElement("button", {className: "btn btn-primary", onClick: this.ondbClickEvent}, "Take"), 
 	                React.createElement("button", {className: "btn pull-right", onClick: this.btnOnClickhow}, "how")
+	                )
 	            )
 	        );
 	    }
